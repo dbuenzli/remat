@@ -1,0 +1,14 @@
+opam-version: "1"
+maintainer: "Daniel Bünzli <daniel.buenzl i@erratique.ch>"
+homepage: "http://erratique.ch/software/luigi"
+authors: ["Daniel Bünzli <daniel.buenzl i@erratique.ch>"]
+doc: "http://erratique.ch/software/luigi/doc"
+tags: [ "ocr" "digitization" "web" "search" "org:erratique" ]
+license: "BSD3"
+ocaml-version: [>= "4.01.0" ]
+depends: [ "js_of_ocaml" "unix" "cmdliner" "xmlm" "jsonm" ]
+build: [
+  [ "ocaml" ""pkg/git.ml" ]
+  [ "ocaml" ""pkg/build.ml" "native=%{ocaml-native}%"
+                            "native-dynlink=%{ocaml-native-dynlink}%" ]
+]

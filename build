@@ -1,0 +1,28 @@
+#!/bin/sh
+# This script is only used for developement. It is removed by the 
+# distribution process. 
+
+set -e
+
+OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -tag debug -classic-display \
+                          -use-ocamlfind"}
+
+action () 
+{
+    case $1 in
+      default)      $OCAMLBUILD luigi.native ;;
+      tests)        echo "No tests for now" ;;
+      doc-user)     shift; pkg/markdown $* doc/user-doc.css doc/howto.md \
+                    doc/describe.md doc/api.md ;;
+      doc-luigi)    shift; pkg-doc $* doc/luigi.docdir ;;
+      doc-luigid)   shift; pkg-doc $* doc/luigid.docdir ;;
+      luigi)        shift; $OCAMLBUILD $* luigi.native ;;
+      luigid)       shift; $OCAMLBUILD $* luigid.native ;;
+      clean)        $OCAMLBUILD -clean ;;
+      *)            $OCAMLBUILD $* ;;
+    esac
+} 
+
+if [ $# -eq 0 ]; 
+then action default ; 
+else action $*; fi

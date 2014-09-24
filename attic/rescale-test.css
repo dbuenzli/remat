@@ -1,0 +1,74 @@
+@charset "UTF-8";
+
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,
+address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b, 
+i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot, 
+thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header, 
+hgroup,menu,nav,section,summary,time,mark,audio,video,input
+{
+  margin: 0; padding: 0; border: 0; outline: 0;
+  font-size: 100%; 
+  vertical-align: baseline;
+  color: inherit;
+}
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+body
+{
+  padding-top: 1.5em;
+  padding-left: 2em;
+  padding-right: 1.85em;
+  width: 1000em;
+  text-align: left;
+  color: gray;
+  background-color: black;
+  -webkit-text-size-adjust: 100%;
+  font-size: 0.625em;
+  line-height: 1.375em;
+  font-family:'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
+.ui { margin-left: 8.4em; }
+.ui div, .ui form { display: inline; }
+.ui label { margin-left: 1em; }
+.col-title { height: 1.375em; }
+.col 
+{ 
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  margin-top: 1em;
+  margin-right: 0.5cm;
+}
+.scale { margin-right: 1.5cm; }
+.col > div {margin-top: 1em; margin-bottom: 2em;}
+.col .scale-label { text-align: right; position: relative; top: -0.25em; }
+.swap-button 
+{ 
+  position: absolute; 
+  display: block; 
+  right: 0em; 
+  top: 3em;
+  font-weight:600;
+  color:grey;
+  padding-right:0.5ex;
+  padding-left:0.5ex;
+  cursor:pointer;
+}
+.swap-button:hover
+{
+  background:grey;
+  color:black;
+}
+.rescales > div:last-child .swap-button{ display: none; }
+.resample
+{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

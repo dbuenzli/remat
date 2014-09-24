@@ -1,0 +1,6 @@
+true : package(unix), package(cmdliner), package(xmlm), package(jsonm)
+<**/*.{ml,mli}> : annot
+<src-common> : include
+<src-luigi> : include
+<src-luigid> : include
+<src-www> : include

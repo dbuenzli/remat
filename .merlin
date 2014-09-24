@@ -1,0 +1,3 @@
+EXT js
+PKG cmdliner jsonm xmlm
+B _build/**

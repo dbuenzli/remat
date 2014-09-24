@@ -1,0 +1,47 @@
+@charset "UTF-8";
+
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr, 
+address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b, 
+i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot, 
+thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header, 
+hgroup,menu,nav,section,summary,time,mark,audio,video,input
+{
+  margin:0; padding:0; border:0; outline:0;
+  font-size: 100%;
+  vertical-align: baseline;
+  color: inherit;
+}
+
+body
+{
+  font-size: 6pt;
+  line-height: 1.375em;
+  font-family: "helvetica neue" , helvetica, arial, sans-serif;
+  text-align: left;
+  color: gray;
+  background-color: black;
+  padding-top: 1.5em;
+  padding-left: 1.85em;
+  padding-right: 1.85em;
+  width: 500em;
+  -webkit-text-size-adjust: 100%;
+}
+
+body > div { padding-top: 1em; }
+body div div { display:inline-block; }
+body div div div 
+{
+  display: block;
+  border:1px solid red;
+  margin-top:0;
+  margin:0.5ex;
+}
+body div div div canvas {border: none; margin: 0;}
+canvas 
+{
+  border: 1px solid red;
+  display: block;
+  margin-top: 0;
+  margin: 0.5ex;
+  image-rendering: optimizeQuality;
+}

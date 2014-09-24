@@ -1,0 +1,6 @@
+/*--------------------------------------------------------------- 
+   Copyright 2012 Daniel C. Bünzli. All rights reserved. 
+   Distributed under a BSD3 license. 
+   See http://erratique.ch/software/luigi for a readable source. 
+  ---------------------------------------------------------------*/ 
+(function () {%output%})();

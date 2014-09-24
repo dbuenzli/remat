@@ -1,0 +1,71 @@
+#!/bin/sh
+
+# Usage: markdown [-b [BROWSER]] [-u URI] PANDOCOPTS... FILE.css FILE.md...
+#
+# -b [BROWSER] If present opens the result in BROWSER. If the option argument 
+#              is absent uses $BROWSER, see the `browser-reload` script.
+# -u [URI]     If present the uri to reload. If absent the directory of 
+#              the last .md file is reloaded.
+
+set -e
+LOC=`dirname $0`
+
+BDIR=${BDIR:="_build"}
+
+RELOAD_BROWSER=false
+RELOAD_DIR=""
+RELOAD_URI=""
+THE_BROWSER=""
+MDFILES=""
+CSSFILES=""
+PANDOCOPTS=""
+
+# Command line parsing
+if [ $# -eq 0 ]; then 
+    echo "`basename $0`: missing required path to markdown file."
+    exit 1
+else
+    while [ $# -gt 0 ]; do
+        case $1 in 
+            -b)    shift
+                   RELOAD_BROWSER=true;
+                   case $1 in 
+                    *.md)  ;; 
+                    *.css) ;; 
+                    -*)    ;; 
+                    *)     THE_BROWSER="-b $1"; shift ;;
+                   esac
+                   ;;
+            -u)    shift; RELOAD_URI=$1; shift ;;
+            *.md)  RELOAD_DIR=`dirname $1`
+                   f="$RELOAD_DIR/`basename $1 .md`"
+                   MDFILES="$MDFILES $f"; 
+                   shift
+                   ;;
+            *.css) CSSFILES="$CSSFILES $1"
+                   PANDOCOPTS="$PANDOCOPTS -c `basename $1`"
+                   shift
+                   ;;
+            *)     PANDOCOPTS="$PANDOCOPTS $1"; shift ;;
+        esac
+    done
+fi
+
+# Markdown with pandoc 
+for f in $MDFILES ; do
+    mkdir -p $BDIR/`dirname $f`
+    pandoc $PANDOCOPTS -o $BDIR/$f.html $f.md
+done
+
+for f in $CSSFILES; do 
+    mkdir -p $BDIR/`dirname $f`
+    cp $f $_
+done
+
+# Reload browser
+if [ "$RELOAD_BROWSER" == "true" ]; then
+    if [ "$RELOAD_URI" == "" ]; then 
+        RELOAD_URI="file://$PWD/$BDIR/$RELOAD_DIR/"
+    fi
+    reload-browser $THE_BROWSER $RELOAD_URI
+fi
