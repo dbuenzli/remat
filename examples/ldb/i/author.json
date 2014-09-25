@@ -1,0 +1,18 @@
+{ 
+  "label":
+  {
+    "en": "By authors", 
+    "fr": "Par auteur",
+    "de": "Nach Autor"
+  },
+  "ui_href": "a",
+  "sort_key": { "*" : [ { "path": ["authors"] }, 
+                        { "path": ["title"] }, 
+                        { "path": ["title-prefix"] } ] }
+  "synopses": "isbd",
+  "headings": 
+  [
+    { "label": [{ "path": "authors", "substring": "." }]}
+    { "label": [{ "path": "authors" }]}
+  ]
+}

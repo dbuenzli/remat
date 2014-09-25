@@ -1,0 +1,24 @@
+{ 
+  "label": 
+  { 
+    "en": "By document type", 
+    "fr": "Par type de document",
+  },
+  "ui_href": "t",
+  "sort_members": ["type", "title", "title-prefix"],
+  "synopses": "isbd",
+  "headings": 
+  [
+    { "labels": 
+      { 
+        "locales": "true"
+        "en": [{ "path": ["type"], 
+                 "map": { "collection" : "Collections", 
+                          "printed-matter" : "Printed matter" }}] 
+        "fr": [{ "path": ["type"], 
+                 "map": { "collection" : "Collections", 
+                          "printed-matter" : "Imprimés" }}]
+      }
+    { "labels": [{ "path" : ["title"], "sub" : "." }], "toc" : "all" }
+  ]
+}

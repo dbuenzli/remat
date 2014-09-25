@@ -1,0 +1,13 @@
+{ 
+  "label":
+  { 
+    "en": "By issue", 
+    "fr": "Par édition", 
+    "de": "Nach Aufgabe" 
+  },
+  "ui_href": "issue",
+  "sort_key": { "*" : [{ "path" : ["volume"] },
+                       { "path" : ["issue"] }]},
+  "synopses": { "*" : [{ "path": ["volume"]}, " (", { "path": ["issue"]}, ")"] }
+}
+

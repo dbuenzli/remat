@@ -1,0 +1,18 @@
+{ 
+  "label": 
+  { 
+    "en": "By language", 
+    "fr": "Par langue",
+    "de": "Nach Sprache"
+  },
+  "ui_href": "l",
+  "sort_key": { "*": [{ "path": ["langs"], "array" : true },
+                      { "path": ["title"] },
+                      { "path": ["title-prefix"] }]},
+  "synopses": "isbd",
+  "headings": 
+  [
+    { "labels": { "*" : [{ "path" : ["langs"] }] }}, 
+    { "labels": { "*" : [{ "path" : ["title"], "sub" : "." }, "toc" : "all"] }}
+  ]
+}

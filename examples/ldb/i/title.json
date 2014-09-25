@@ -1,0 +1,16 @@
+{
+  "label": 
+  { 
+    "en": "By title", 
+    "fr": "Par titre", 
+    "de": "Nach Titel"
+  },
+  "ui_href": "t",
+  "sort_members": { "*" : ["title", "title-prefix"] }
+  "synopses": "isbd"
+  "headings": 
+  [
+    { "label": { "*" : [{ "path": ["title"], "sub": "." }], "toc": "all" } }
+  ],
+}
+
