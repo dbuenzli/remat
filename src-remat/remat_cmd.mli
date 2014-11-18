@@ -1,20 +1,25 @@
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli. All rights reserved.
    Distributed under the BSD3 license, see license at the end of the file.
-   %%NAME%% release %%VERSION%%
+   %%NAME%% version %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Luigid main program. *)
+(** Remat commands. *)
 
-open Cmdliner;;
+val convert : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [convert] command. *)
 
-let cmds = [Cmd.start; Cmd.stop; Cmd.reload; Cmd.status; Cmd.help]
-let main () = match Term.eval_choice Cmd.default cmds with
-| `Error _ -> exit 4 (* to respect return codes of Cmd.status *)
-| `Ok ret -> exit ret
-| `Version | `Help -> exit 0
+val browser : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [browser] command. *)
 
-let () = main ()
+val publish : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [publish] command. *)
+
+val help : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [help] command. *)
+
+val default : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The default command. *)
 
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli

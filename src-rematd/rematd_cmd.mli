@@ -1,27 +1,28 @@
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli. All rights reserved.
-   Distributed under the BSD3 license, see license at the end of the file.
-   %%NAME%% release %%VERSION%%
+   Distributed under a BSD3 license, see license at the end of the file.
+   %%NAME%% version %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-type t =
-  { pid_file : string;
-    log_file : string;
-    log_verbosity : Log.verbosity;
-    query_log_file : string;
-    host : string;
-    port : int; }
+(** Rematd commands. *)
 
-let default =
-  { pid_file = "/var/run/luigid.pid";
-    log_file = "/var/log/luigid/luigid.log";
-    query_log_file = "/var/log/luigid/query.log";
-    log_verbosity = `Verbose;
-    host = "localhost";
-    port = 9398; }
+val default : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The default command. *)
 
-let of_file _ = `Ok default (* TODO *)
+val start : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [start] command. *)
 
+val stop : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [stop] command. *)
+
+val reload : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [reload] command. *)
+
+val status : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [status] command. *)
+
+val help : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [help] command. *)
 
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli

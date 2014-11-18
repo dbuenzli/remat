@@ -39,10 +39,10 @@ reopen_logfile()
 *)
 
 let fos = format_of_string
-let msg_alive = fos "Luigi's daemon is already running with PID %d."
-let msg_dead = fos "Luigi's daemon is not running."
+let msg_alive = fos "Remat's daemon is already running with PID %d."
+let msg_dead = fos "Remat's daemon is not running."
 let msg_not_found =
-  fos "Luigi's daemon PID file %s exists but no process %d found."
+  fos "Remat's daemon PID file %s exists but no process %d found."
 
 let init_log verb ppf = Log.set_reporter (Log.formatter_reporter verb ppf)
 
@@ -123,7 +123,7 @@ let copts_man = [ `S copts_sec; `P "These options are common to all commands." ]
 let config =
   let config_file =
     let default = try Sys.getenv "LUIGI_CONF" with
-    | Not_found -> "/etc/luigi/luigid.conf" (* TODO config var *)
+    | Not_found -> "/etc/remat/rematd.conf" (* TODO config var *)
     in
     let doc = "Use $(docv) for the configuration file." in
     Arg.(value & opt string default & info ["c"; "config"] ~docv:"FILE"
@@ -137,7 +137,7 @@ let start =
   let daemonize =
     Arg.(value & flag & info ["D"; "daemonize"] ~doc:"Daemonize the service.")
   in
-  let doc = "start Luigi's daemon" in
+  let doc = "start Remat's daemon" in
   let man = [
     `S "DESCRIPTION";
     `P "This command starts the daemon."] @ copts_man @ [
@@ -148,10 +148,10 @@ let start =
   Term.info "start" ~sdocs:copts_sec ~doc ~man
 
 let stop =
-  let doc = "stop Luigi's daemon" in
+  let doc = "stop Remat's daemon" in
   let man = [
     `S "DESCRIPTION";
-    `P "The command $(b,$(tname)) stops Luigi's deamon. This can also be
+    `P "The command $(b,$(tname)) stops Remat's deamon. This can also be
         achieved by sending SIGQUIT signal to the daemon."] @ copts_man @ [
     `S "SEE ALSO";
     `P "$(b,$(mname))(1)" ]
@@ -160,7 +160,7 @@ let stop =
   Term.info "stop" ~sdocs:copts_sec ~doc ~man
 
 let reload =
-  let doc = "reload Luigi's configuration" in
+  let doc = "reload Remat's configuration" in
   let man = [
     `S "DESCRIPTION";
     `P "The command $(b,$(tname)) the configuration file without stopping
@@ -174,16 +174,16 @@ let reload =
   Term.info "reload" ~sdocs:copts_sec ~doc ~man
 
 let status =
-  let doc = "return Luigi's running status" in
+  let doc = "return Remat's running status" in
   let man = [
     `S "DESCRIPTION";
-    `P "The command $(b,$(tname)) prints Luigi's status on stdout and
+    `P "The command $(b,$(tname)) prints Remat's status on stdout and
         returns."; ] @ copts_man @ [
     `S "EXIT CODES";
-    `I ("0", "Luigi is running.");
-    `I ("1", "Luigi is not running but pid file exists.");
-    `I ("3", "Luigi is not running.");
-    `I ("4", "Luigi's status is unknown");
+    `I ("0", "Remat is running.");
+    `I ("1", "Remat is not running but pid file exists.");
+    `I ("3", "Remat is not running.");
+    `I ("4", "Remat's status is unknown");
     `S "SEE ALSO";
     `P "$(b,$(mname))(1)" ]
   in
@@ -195,7 +195,7 @@ let help =
     let doc = "The topic to get help on, `topics' lists the topics." in
     Arg.(value & pos 0 (some string) None & info [] ~docv:"TOPIC" ~doc)
   in
-  let doc = "show help about Luigi" in
+  let doc = "show help about Remat" in
   let man = [
     `S "DESCRIPTION";
     `P "The command $(b,$(tname)) shows help about $(mname) and its commands.";
@@ -211,16 +211,16 @@ let default =
   let doc = "%%SYNOPSIS%%" in
   let man = [
     `S "DESCRIPTION";
-    `P "$(b,luigid) is a service to search and display
+    `P "$(b,rematd) is a service to search and display
         digitized documents on the World Wide Web. It interacts with a
-        web server via SCGI, see $(b,luigid-webserver)(7).";
-    `P "Use 'luigid help config' for help about Luigi's configuration.";
+        web server via SCGI, see $(b,rematd-webserver)(7).";
+    `P "Use 'rematd help config' for help about Remat's configuration.";
     `Noblank;
-    `P "Use 'luigid help webserver' for help about web server configuration.";
+    `P "Use 'rematd help webserver' for help about web server configuration.";
     `Noblank;
-    `P "Use 'luigid help $(i,COMMAND)' for help about $(i,COMMAND).";
+    `P "Use 'rematd help $(i,COMMAND)' for help about $(i,COMMAND).";
     `Noblank;
-    `P "Use 'luigid help topics' for a list of help topics.";
+    `P "Use 'rematd help topics' for a list of help topics.";
     `S "ENVIRONMENT";
     `I ("$(i,LUIGI_CONF)", "The configuration file to use. The command line
          option $(b,--conf) takes precedence over the environment variable.");
@@ -228,11 +228,11 @@ let default =
     `I ("SIGTERM, SIGINT",
         "Quick daemon termination (doesn't handle pending requests).");
     `I ("SIGQUIT",
-        "Graceful daemon termination, equivalent to $(b,luigid-stop)(1).");
+        "Graceful daemon termination, equivalent to $(b,rematd-stop)(1).");
     `I ("SIGHUP",
-        "Daemon configuration reload, equivalent to $(b,luigid-reload)(1).");
+        "Daemon configuration reload, equivalent to $(b,rematd-reload)(1).");
     `I ("SIGUSR1",
-        "Reopens the log files, equivalent to $(b,luigid-reopen-logs)(1)");
+        "Reopens the log files, equivalent to $(b,rematd-reopen-logs)(1)");
     `S "BUGS AND FEEDBACK";
     `P "Email them to <%%EMAIL%%>.";
     `S "AUTHOR";
@@ -241,7 +241,7 @@ let default =
     `P "TODO" ]
   in
   Term.(ret (pure default $ config)),
-  Term.info "luigid" ~version ~sdocs:copts_sec ~doc ~man
+  Term.info "rematd" ~version ~sdocs:copts_sec ~doc ~man
 
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli

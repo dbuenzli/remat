@@ -299,13 +299,13 @@ let convert =
         "The XML representation output by the ABBYY FineReader engine 6v1.
           $(i,http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml)");
     `I ("$(b,pbin) (.pbin) -> ptext",
-        "Luigi's internal binary physical document model. This format is used
+        "Remat's internal binary physical document model. This format is used
           as an efficient representation for FineReader's XML and is the
           Rosetta stone to most other representations. The format is
           undocumented and may change in the future, do not use for archival
           purposes.");
     `I ("$(b,ptext) (.p.txt) output only",
-        "UTF-8 text file with the text in the order found in Luigi's physical
+        "UTF-8 text file with the text in the order found in Remat's physical
          document model, page by page, block by block, line by line.");
     `S "SEE ALSO";
     `P "$(mname)(1)"; ]
@@ -380,7 +380,7 @@ let publish =
   let man = [
     `S "DESCRIPTION";
     `P "The $(b,$(tname)) command generates the static data files that
-        can be used with Luigi's web client.";
+        can be used with Remat's web client.";
     `S "SEE ALSO";
     `P "$(mname)(1)" ]
   in
@@ -410,17 +410,17 @@ let default =
     `S "DESCRIPTION";
     `P "$(b,$(mname)) is a command line tool to inspect and massage
         OCR data for the web publication of digitized documents
-        with $(b,luigid).";
+        with $(b,rematd).";
     `P "Use '$(mname) help $(i,COMMAND)' for information about $(i,COMMAND).";
     `S "BUGS AND FEEDBACK";
     `P "Email them to <%%AUTHORS%%>.";
     `S "AUTHOR";
     `P "Daniel C. Buenzli, $(i,http://erratique.ch)";
     `S "SEE ALSO";
-    `P "luigid(1)" ]
+    `P "rematd(1)" ]
   in
   Term.(ret (pure default $ pure ())),
-  Term.info "luigi" ~version ~doc ~man
+  Term.info "remat" ~version ~doc ~man
 
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli

@@ -3,8 +3,8 @@
 #use "topkg.ml";;
 
 let () =
-  Pkg.describe "luigi" ~builder:`OCamlbuild [
-    Pkg.bin ~auto:true "src-luigi/luigi";
-    Pkg.bin ~auto:true "src-luigid/luigid";
+  Pkg.describe "remat" ~builder:`OCamlbuild [
+    Pkg.bin ~auto:true "src-remat/remat";
+    Pkg.bin ~auto:true "src-rematd/rematd";
     Pkg.doc "README.md";
     Pkg.doc "CHANGES.md"; ]

@@ -1,28 +1,24 @@
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli. All rights reserved.
-   Distributed under a BSD3 license, see license at the end of the file.
-   %%NAME%% version %%VERSION%%
+   Distributed under the BSD3 license, see license at the end of the file.
+   %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Luigid commands. *)
+(** Rematd configuration.
+    {1  }*)
 
-val default : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The default command. *)
+type t =
+  { pid_file : string;
+    log_file : string;
+    log_verbosity : Log.verbosity;
+    query_log_file : string;
+    host : string;
+    port : int; }
+(** The type for configurations. *)
 
-val start : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The [start] command. *)
-
-val stop : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The [stop] command. *)
-
-val reload : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The [reload] command. *)
-
-val status : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The [status] command. *)
-
-val help : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The [help] command. *)
+val of_file : string -> [`Ok of t | `Error of string ]
+(** [of_file file] reads a configuration from [file]. Returns
+    `Error in case of errors. *)
 
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli
@@ -40,7 +36,7 @@ val help : int Cmdliner.Term.t * Cmdliner.Term.info
       disclaimer in the documentation and/or other materials provided
       with the distribution.
 
-   3. Neither the name of the Daniel C. Bünzli nor the names of
+   3. Neither the name of Daniel C. Bünzli nor the names of
       contributors may be used to endorse or promote products derived
       from this software without specific prior written permission.
 

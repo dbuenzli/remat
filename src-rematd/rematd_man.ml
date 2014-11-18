@@ -4,21 +4,28 @@
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Luigid configuration.
-    {1  }*)
+(* Additional man pages *)
 
-type t =
-  { pid_file : string;
-    log_file : string;
-    log_verbosity : Log.verbosity;
-    query_log_file : string;
-    host : string;
-    port : int; }
-(** The type for configurations. *)
+let remat_manual = "Remat manual"
+let remat_version = "Remat %%VERSION%%"
+let conf_page = ("LUIGI-CONF", 5, "", remat_version, remat_manual),
+  [ `S "NAME";
+    `P "remat-conf - information about Remat's configuration file";
+    `S "DESCRIPTION";
+    `P "A remat configuration file. TODO";
+    `S "CONFIGURATION OPTIONS";
+    `S "SEE ALSO";
+    `P "$(b,remat)(1)"; ]
 
-val of_file : string -> [`Ok of t | `Error of string ]
-(** [of_file file] reads a configuration from [file]. Returns
-    `Error in case of errors. *)
+let webserver_page = ("LUIGI-WEBSERVER", 7, "", remat_version, remat_manual),
+  [ `S "NAME";
+    `P "remat-webserver - information about Remat's web server interaction";
+    `S "DESCRIPTION";
+    `P "TODO";
+    `S "SEE ALSO";
+    `P "$(b,remat)(1)"; ]
+
+let pages = [ "conf", conf_page; "webserver", webserver_page ]
 
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli

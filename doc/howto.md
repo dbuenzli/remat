@@ -1,14 +1,14 @@
 HOWTO — [DESCRIBE](describe.html) — [REST API](api.html)
 
-# Luigi HOWTO 
+# Remat HOWTO 
 
-This quick guide should get you started with Luigi. It assumes you
+This quick guide should get you started with Remat. It assumes you
 have gone through the `README`, installed the software, have some data
 to work on and that your are comfortable with the command line.
 
 ## Introduction
 
-Luigi publishes a repository. A *repository* contains a set of
+Remat publishes a repository. A *repository* contains a set of
 documents.  A *document* is either:
 
 * A *collection*, a list of base documents that can be sorted by
@@ -29,36 +29,36 @@ directly to the repository or to a *single* collection. However the
 repository and collections can be sorted and browsed according to
 arbitrary custom hierarchical indexes based on document metadata.
 
-Luigi provides two tools to publish digitized documents on the web,
-`luigi` and `luigid`.
+Remat provides two tools to publish digitized documents on the web,
+`remat` and `rematd`.
 
-* `luigi` allows to organize and process the data resulting from the 
+* `remat` allows to organize and process the data resulting from the 
   digitization process and produce the requested data for the web 
   publication. 
 
-* `luigid` is an SCGI daemon (or CGI executable) that works with a
+* `rematd` is an SCGI daemon (or CGI executable) that works with a
   webserver (nginx, apache, etc.) to provide a search interface to the
   repository.
 
-`luigid` is only needed for searching the repository. If you just want to
-provide a browsing interface to your documents, `luigi` will generate
+`rematd` is only needed for searching the repository. If you just want to
+provide a browsing interface to your documents, `remat` will generate
 a set of static files that you can just publish with any webserver.
 
 Both tools are extensively documented via man pages which are also
 available interactively by invoking the tools with `help` :
 
-    luigi help 
-    luigid help
+    remat help 
+    rematd help
     
 
 ## Describing your repository with description files
 
 The digitization process produces a collection of files of different
 types, high-resolution TIFF, PNG or JPEG files, PDFs, OCR data,
-etc. `luigi` needs to know how these disparate files are related to
+etc. `remat` needs to know how these disparate files are related to
 form documents, collections and the contents of your archive. 
 
-In order to communicate that information to `luigi` you need to write
+In order to communicate that information to `remat` you need to write
 description files. These files can be hand-written, generated from
 other description standards, databases, digitization workflows, or
 higher-level user interfaces. Description files are text files made of

@@ -49,7 +49,7 @@
 * Image scaling FF ubuntu https://bugzilla.mozilla.org/show_bug.cgi?id=486918
 * http://stackoverflow.com/questions/90178/make-a-div-fill-the-remaining-screen-space
 
-# luigi
+# remat
 
 * TODO --no-ui option
 * remove ui ? 
@@ -80,7 +80,7 @@ https://github.com/tmpvar/jsdom
 http://www.phantomjs.org/
 ** Provide support for web search bots. (sitemap.xml to the text)  
 
-# luigid
+# rematd
 
 * DOING daemon.ml[i] implementing basic daemonization.
 * init.d deamon

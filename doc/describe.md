@@ -1,12 +1,12 @@
 [HOWTO](howto.html) — DESCRIBE — [REST API](api.html)
 
-# Luigi description files reference v0
+# Remat description files reference v0
 
 This document is the reference manual for repository description files.
 It assumes you are familiar with the [HOWTO](howto.html) and JSON.
 
-Luigi description files define the contents and configure the
-presentation of a repository on the web. They are used by the `luigi`
+Remat description files define the contents and configure the
+presentation of a repository on the web. They are used by the `remat`
 command line tool to derive the data needed for the web publication.
 
 Description files are [JSON text](http://tools.ietf.org/html/rfc4627) 
@@ -233,7 +233,7 @@ The `Repo_d` object defines global parameters for the repository. The
 | Member name      | Type                | 
 |:-----------------|:------------------------|:------------
 | `version`        | `Integer`               \
-| Luigi API version number, currently 0.
+| Remat API version number, currently 0.
 | `locales`        | `Array.<`[`Locale_d`](#type-Locale_d)`>` \
 | End-user locales.
 | `name`           | `Locales.<String>`      | Repository name.

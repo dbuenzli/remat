@@ -1,14 +1,14 @@
 [HOWTO](howto.html) — [DESCRIBE](describe.html) — REST API
 
-Luigi REST API v0
+Remat REST API v0
 =================
 
-This document describes the Luigi REST API that mediates the
+This document describes the Remat REST API that mediates the
 interaction between a client and a server. It assumes basic knowledge
-of Luigi's data model.
+of Remat's data model.
 
 The API allows to implement new clients (or servers) that can be used
-with Luigi's default server (or client). The primary goal of the API
+with Remat's default server (or client). The primary goal of the API
 is to *query* and *present* the document repository
 contents. Modifying the repository via the API is currently not
 supported. Except for media representations, all URI representations
@@ -97,7 +97,7 @@ The `Repo` type is an object with the following members.
 
 | Member name    | Type                 | 
 |:---------------|:---------------------|:------------
-| `version`      | `Integer`            | Luigi API version number, currently 0.
+| `version`      | `Integer`            | Remat API version number, currently 0.
 | `locales`      | `Array.<`[`Locale_d`](describe.html#type-Locale_d)`>` \
 | End-user locales.
 | `name`         | `Locales.<String>`   | The repository name.
@@ -218,14 +218,14 @@ End user URIs {#end-user-URI}
 
 Clients that render resources to end users should allow them to
 bookmark them with good URIs expressed relative to the base URI
-`$B`. With Luigi's default server, these URI do not correspond to
+`$B`. With Remat's default server, these URI do not correspond to
 anything on the server, they should silently redirect to the html
 document defining the interface, the client will then analyse the URI
 and make the appropriate calls on the API to render the contents of
 the URI.
 
 This section defines the mapping between end-user visible URIs and
-corresponding actions that should be taken.  Luigi's default web
+corresponding actions that should be taken.  Remat's default web
 client implements this mapping. On the server everything under `$B`
 but `$B/api/` must silently redirect to `$B/api/ui/main.html`.
 

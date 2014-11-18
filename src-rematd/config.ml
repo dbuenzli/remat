@@ -4,28 +4,24 @@
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(* Additional man pages *)
+type t =
+  { pid_file : string;
+    log_file : string;
+    log_verbosity : Log.verbosity;
+    query_log_file : string;
+    host : string;
+    port : int; }
 
-let luigi_manual = "Luigi manual"
-let luigi_version = "Luigi %%VERSION%%"
-let conf_page = ("LUIGI-CONF", 5, "", luigi_version, luigi_manual),
-  [ `S "NAME";
-    `P "luigi-conf - information about Luigi's configuration file";
-    `S "DESCRIPTION";
-    `P "A luigi configuration file. TODO";
-    `S "CONFIGURATION OPTIONS";
-    `S "SEE ALSO";
-    `P "$(b,luigi)(1)"; ]
+let default =
+  { pid_file = "/var/run/rematd.pid";
+    log_file = "/var/log/rematd/rematd.log";
+    query_log_file = "/var/log/rematd/query.log";
+    log_verbosity = `Verbose;
+    host = "localhost";
+    port = 9398; }
 
-let webserver_page = ("LUIGI-WEBSERVER", 7, "", luigi_version, luigi_manual),
-  [ `S "NAME";
-    `P "luigi-webserver - information about Luigi's web server interaction";
-    `S "DESCRIPTION";
-    `P "TODO";
-    `S "SEE ALSO";
-    `P "$(b,luigi)(1)"; ]
+let of_file _ = `Ok default (* TODO *)
 
-let pages = [ "conf", conf_page; "webserver", webserver_page ]
 
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli
@@ -43,7 +39,7 @@ let pages = [ "conf", conf_page; "webserver", webserver_page ]
       disclaimer in the documentation and/or other materials provided
       with the distribution.
 
-   3. Neither the name of Daniel C. Bünzli nor the names of
+   3. Neither the name of the Daniel C. Bünzli nor the names of
       contributors may be used to endorse or promote products derived
       from this software without specific prior written permission.
 

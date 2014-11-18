@@ -1,8 +1,8 @@
 opam-version: "1"
 maintainer: "Daniel Bünzli <daniel.buenzl i@erratique.ch>"
-homepage: "http://erratique.ch/software/luigi"
+homepage: "http://erratique.ch/software/remat"
 authors: ["Daniel Bünzli <daniel.buenzl i@erratique.ch>"]
-doc: "http://erratique.ch/software/luigi/doc"
+doc: "http://erratique.ch/software/remat/doc"
 tags: [ "ocr" "digitization" "web" "search" "org:erratique" ]
 license: "BSD3"
 ocaml-version: [>= "4.01.0" ]

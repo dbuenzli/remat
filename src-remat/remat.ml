@@ -4,14 +4,14 @@
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Luigi main program. *)
+(** Remat main program. *)
 
 open Cmdliner;;
 
-let cmds = [ Luigi_cmd.convert; Luigi_cmd.browser;
-             Luigi_cmd.publish; Luigi_cmd.help]
+let cmds = [ Remat_cmd.convert; Remat_cmd.browser;
+             Remat_cmd.publish; Remat_cmd.help]
 
-let main () = match Term.eval_choice Luigi_cmd.default cmds with
+let main () = match Term.eval_choice Remat_cmd.default cmds with
 | `Ok ret -> exit ret
 | `Error _ -> exit 1
 | `Help | `Version -> exit 0

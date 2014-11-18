@@ -39,9 +39,9 @@ type lookup =
 type format_el = [`String of string | `Lookup of lookup ]
 type formatter = format_el list
 
-(* Archive *)
+(* Repo *)
 
-type archive_d =
+type repo_d =
   { version : int;
     locales : Locale.t list * uri list;
     name : string locales;
@@ -69,7 +69,7 @@ type doc_d = { title : string; }
 type t =
   { base : string;
     log : Log.t;
-    mutable archive_d : [ `Ok of archive_d | `Failed | `None ];
+    mutable archive_d : [ `Ok of repo_d | `Failed | `None ];
     indexes_d : (index_id, index_d option) Hashtbl.t;
     docs_d : (doc_id, doc_d option) Hashtbl.t;
     mutable doc_ids : [`Ok of doc_id list | `Failed | `None ] }
@@ -87,7 +87,7 @@ let i_dir = "i"
 let dir_exists d = try Sys.is_directory d with Sys_error _ -> false
 let file_exists p = Sys.file_exists p && not (Sys.is_directory p)
 
-let archive_d_file db ?(log = db.log.err) ()  =
+let repo_d_file db ?(log = db.log.err) ()  =
   let fn = Filename.concat db.base "archive.json" in
   if file_exists fn then Some fn else (log err_archive_d_miss fn; None)
 
@@ -326,7 +326,7 @@ let create : 'a. ?log:Log.t -> string -> t =
     docs_d = Hashtbl.create 1000;
     doc_ids = `None; }
 
-let rec archive_d db = failwith "TODO"
+let rec repo_d db = failwith "TODO"
 (*
 match db.archive_d with
 | `Ok ad -> Some ad
