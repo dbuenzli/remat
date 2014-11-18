@@ -8,7 +8,7 @@ license: "BSD3"
 ocaml-version: [>= "4.01.0" ]
 depends: [ "js_of_ocaml" "unix" "cmdliner" "xmlm" "jsonm" ]
 build: [
-  [ "ocaml" ""pkg/git.ml" ]
-  [ "ocaml" ""pkg/build.ml" "native=%{ocaml-native}%"
-                            "native-dynlink=%{ocaml-native-dynlink}%" ]
+  [ "ocaml" "pkg/git.ml" ]
+  [ "ocaml" "pkg/build.ml" "native=%{ocaml-native}%"
+                           "native-dynlink=%{ocaml-native-dynlink}%" ]
 ]
