@@ -4,8 +4,6 @@
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-open Log.Log
-
 let fstr = format_of_string
 
 type loc = string * (int * int) * (int * int)
@@ -68,7 +66,6 @@ type doc_d = { title : string; }
 
 type t =
   { base : string;
-    log : Log.t;
     mutable archive_d : [ `Ok of repo_d | `Failed | `None ];
     indexes_d : (index_id, index_d option) Hashtbl.t;
     docs_d : (doc_id, doc_d option) Hashtbl.t;
@@ -87,21 +84,21 @@ let i_dir = "i"
 let dir_exists d = try Sys.is_directory d with Sys_error _ -> false
 let file_exists p = Sys.file_exists p && not (Sys.is_directory p)
 
-let repo_d_file db ?(log = db.log.err) ()  =
+let repo_d_file db ()  =
   let fn = Filename.concat db.base "archive.json" in
-  if file_exists fn then Some fn else (log err_archive_d_miss fn; None)
+  if file_exists fn then Some fn else (Log.err err_archive_d_miss fn; None)
 
-let index_file db ?(log = db.log.err) id =
+let index_file db id =
   let fn = Filename.concat db.base (Filename.concat i_dir (id ^ ".json")) in
-  if file_exists fn then Some fn else (log err_index_miss id fn; None)
+  if file_exists fn then Some fn else (Log.err err_index_miss id fn; None)
 
-let doc_file db ?(log = db.log.err) id =
+let doc_file db id =
   let fn = Filename.concat db.base (Filename.concat d_dir (id ^ ".json")) in
-  if file_exists fn then Some fn else (log err_doc_miss id fn; None)
+  if file_exists fn then Some fn else (Log.err err_doc_miss id fn; None)
 
-let docs_dir db ?(log = db.log.err) () =
+let docs_dir db () =
   let dir = Filename.concat db.base "d" in
-  if dir_exists dir then Some dir else (log err_doc_dir_miss dir; None)
+  if dir_exists dir then Some dir else (Log.err err_doc_dir_miss dir; None)
 
 (* Database decoder *)
 
@@ -139,15 +136,15 @@ let decode_file inf db d_v =
       let v = d_v d in
       close ic; v
     with
-    | Sys_error e -> db.log.err "%s" e; close ic; None
-  with Sys_error e -> db.log.err "%s" e; None
+    | Sys_error e -> Log.err "%s" e; close ic; None
+  with Sys_error e -> Log.err "%s" e; None
 
 let d_err d fmt =
-  d.db.log.err ("@[%s:%a: " ^^ fmt ^^ "@]") d.inf Fmt.pp_range
+  Log.err ("@[%s:%a: " ^^ fmt ^^ "@]") d.inf Fmt.pp_range
     (Jsonm.decoded_range d.d)
 
 let d_warn d fmt =
-  d.db.log.warn ("@[%s:%a:@ " ^^ fmt ^^ "@]") d.inf Fmt.pp_range
+  Log.warn ("@[%s:%a:@ " ^^ fmt ^^ "@]") d.inf Fmt.pp_range
     (Jsonm.decoded_range d.d)
 
 
@@ -319,9 +316,9 @@ let d_index_d d = failwith "TODO"
 
 let d_doc_d d = failwith "TODO"
 
-let create : 'a. ?log:Log.t -> string -> t =
-  fun ?(log = Log.default_log) base ->
-  { base; log; archive_d = `None;
+let create : string -> t =
+  fun base ->
+  { base; archive_d = `None;
     indexes_d = Hashtbl.create 100;
     docs_d = Hashtbl.create 1000;
     doc_ids = `None; }
@@ -351,10 +348,10 @@ let rec doc_ids db = match db.doc_ids with
         let add_id acc fn =
           if (Filename.check_suffix fn ".json")
           then (Filename.chop_suffix fn ".json") :: acc
-          else (db.log.warn warn_doc_dir_junk (Filename.concat d fn); acc)
+          else (Log.warn warn_doc_dir_junk (Filename.concat d fn); acc)
         in
         try `Ok (List.rev (Array.fold_left add_id [] (Sys.readdir d))) with
-        | Sys_error e -> db.log.err "%s" e; `Failed
+        | Sys_error e -> Log.err "%s" e; `Failed
     in
     db.doc_ids <- v; doc_ids db
 

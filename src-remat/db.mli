@@ -84,7 +84,7 @@ type doc_d = { title : string; }
 type t
 (** The type for databases. *)
 
-val create : ?log: Log.t -> string -> t
+val create : string -> t
 (** [create dir] is a database that reads descriptions from [dir],
     errors and warnings are logged using [log]. *)
 

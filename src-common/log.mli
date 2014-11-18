@@ -1,93 +1,73 @@
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli. All rights reserved.
+   Copyright 2014 Daniel C. Bünzli. All rights reserved.
    Distributed under the BSD3 license, see license at the end of the file.
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Logging module
+(** Logging. *)
 
-    {b Warning.} Not thread safe. *)
+(** {1 Log level} *)
 
-(** {1 Logging} *)
+(** The type for log levels. *)
+type level = Show | Error | Warning | Info | Debug
 
-type level = [ `Debug | `Error | `Info | `Warning ]
-(** The type for logging levels. *)
+val msg : ?header:string -> level ->
+  ('a, Format.formatter, unit, unit) format4 -> 'a
+(** [msg header l fmt ...] logs a message with level [l]. [header] is
+      the message header, default depends on [l]. *)
 
-type 'a level_log = ('a, Format.formatter, unit, unit) Pervasives.format4 -> 'a
-(** The type for a log level. *)
+val kmsg : ?header:string ->
+  (unit -> 'a) -> level -> ('b, Format.formatter, unit, 'a) format4 -> 'b
+(** [kmsg header k l fmt ...] is like [msg header l fmt] but calls [k ()]
+    before returning. *)
 
-type 'a log = level -> 'a level_log
-(** The basic type for logs. *)
+val show : ?header:string -> ('a, Format.formatter, unit, unit) format4 -> 'a
+(** [show fmt ...] logs a message with level [Show]. [header] defaults
+    to [None]. *)
 
-(** Module to open.
+val err : ?header:string -> ('a, Format.formatter, unit, unit) format4 -> 'a
+(** [err fmt ...] logs a message with level [Error]. [header] defaults
+    to ["ERROR"]. *)
 
-    Defines a type for first class value logs. It's also a module
-    that can be opened in order to be able to access the fields without
-    prefixing. *)
-module Log : sig
-  type t =
-    { log : 'a. 'a log;
-      err : 'a. 'a level_log;
-      warn : 'a. 'a level_log;
-      info : 'a. 'a level_log;
-      debug : 'a. 'a level_log; }
-    (** The type for first class logs. *)
-end
+val warn : ?header:string -> ('a, Format.formatter, unit, unit) format4 -> 'a
+(** [warn fmt ...] logs a message with level [Warning]. [header] defaults
+    to ["WARNING"]. *)
 
-type t = Log.t
-(** The type for first class logs. *)
+val info : ?header:string -> ('a, Format.formatter, unit, unit) format4 -> 'a
+(** [info fmt ...] logs a message with level [Info]. [header] defaults
+    to ["INFO"]. *)
 
-val log : 'a log
-(** [log l fmt a1 a2 ...] logs a level [l] message with the format string
-    [fmt] and its arguments [a1 a2 ...] *)
+val debug : ?header:string -> ('a, Format.formatter, unit, unit) format4 -> 'a
+(** [debug info ...] logs a message with level [Debug]. [header] defaults
+    to ["DEBUG"]. *)
 
-val err : 'a level_log
-(** [err] is [log `Error]. *)
+(** {1 Log level and output} *)
 
-val warn : 'a level_log
-(** [warn] is [log `Warn]. *)
+val level : unit -> level option
+(** [level ()] is the log level (if any). If the log level is [(Some l)]
+    any message whose level is [<= l] is logged. If level is [None]
+    no message is ever logged. Initially the level is [(Some Warning)]. *)
 
-val info : 'a level_log
-(** [info] is [log `Info]. *)
+val set_level : level option -> unit
+(** [set_level l] sets the log level to [l]. See {!level}. *)
 
-val debug : 'a level_log
-(** [debug] is [log `Debug]. *)
+val set_formatter : [`All | `Level of level ] -> Format.formatter -> unit
+(** [set_formatter spec ppf] sets the formatter for a given level or
+    for all the levels according to [spec]. Initially the formatter
+    of level [Show] is {!Format.std_formatter} and all the other level
+    formatters are {!Format.err_formatter}. *)
 
-val default_log : t
-(** [default_log] is the first-class log corresponding to {!log}. *)
+(** {1 Log monitoring} *)
 
-(** {1 Reporting} *)
+val err_count : unit -> int
+(** [err_count ()] is the number of messages logged with level [Error]. *)
 
-type verbosity = [ `Verbose | `Normal | `Error | `Quiet ]
-(** The type for log reporting verbosity.
-    {ul
-    {- [`Verbose] logs all levels.},
-    {- [`Normal] logs the levels [`Error], [`Warning] and [`Info].}
-    {- [`Error] logs the levels [`Error].}
-    {- [`Quiet] logs nothing.}}
-*)
-
-type reporter = { report : 'a. 'a log }
-(** The type for log message reporters. *)
-
-val set_reporter : reporter -> unit
-(** [set_reporter r] sets the log reporter to [r]. Initially, defaults
-    to {!nil_reporter}. *)
-
-val nil_reporter : reporter
-(** [nil_reporter] discards all entries. *)
-
-val formatter_reporter : verbosity -> Format.formatter -> reporter
-(** [formatter_reporter verbosity ppf] reports on [ppf]
-    according to [verbosity]. *)
-
-val timed_formatter_reporter : verbosity -> Format.formatter -> reporter
-(** [timed_formatter_reporter verbosity ppf] reports on [ppf]
-    according to [verbosity] with timing information. *)
-
+val warn_count : unit -> int
+(** [warn_count ()] is the number of messages logged with level
+    [Warning]. *)
 
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli
+   Copyright 2014 Daniel C. Bünzli.
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without

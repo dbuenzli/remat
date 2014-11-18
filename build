@@ -12,6 +12,7 @@ action ()
     case $1 in
       default)      $OCAMLBUILD remat.native ;;
       tests)        echo "No tests for now" ;;
+      doc)          shift; action doc-remat $* ;;
       doc-user)     shift; pkg/markdown $* doc/user-doc.css doc/howto.md \
                     doc/describe.md doc/api.md ;;
       doc-remat)    shift; pkg-doc $* doc/remat.docdir ;;

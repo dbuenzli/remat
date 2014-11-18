@@ -27,7 +27,9 @@ let set_verbosity quiet =
   | 0 -> `Normal | 1 -> `Error | _ -> `Quiet
   in
   Ui.set_verbosity verb; (* TODO reconcile log and UI verbosity *)
-  Log.set_reporter (Log.formatter_reporter verb Format.std_formatter)
+  (* Log.set_reporter (Log.formatter_reporter verb Format.std_formatter) *)
+  (* TODO *)
+  ()
 
 (* convert *)
 

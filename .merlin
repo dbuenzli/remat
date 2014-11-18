@@ -1,3 +1,7 @@
 EXT js
 PKG cmdliner jsonm xmlm
 B _build/**
+S src-common
+S src-remat
+S src-rematd
+S src-www

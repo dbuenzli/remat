@@ -1,94 +1,82 @@
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli. All rights reserved.
+   Copyright 2014 Daniel C. Bünzli. All rights reserved.
    Distributed under the BSD3 license, see license at the end of the file.
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(* TODO define a structure to allow mutiple first class log definition.
-   Basically take a reporter and return a Log.Log.t.
+(* Log level and output *)
 
-   TODO, reporter seems absurd. Simply return a Log.Log.t from
-   a formatter and have a set_default_log.
-*)
+type level = Show | Error | Warning | Info | Debug
 
-type level = [ `Debug | `Error | `Info | `Warning ]
-type 'a level_log = ('a, Format.formatter, unit, unit) Pervasives.format4 -> 'a
-type 'a log = level -> 'a level_log
+let level = ref (Some Warning)
+let set_level l = level := l
+let level () = !level
 
-module Log = struct
-  type t =
-    { log : 'a. 'a log;
-      err : 'a. 'a level_log;
-      warn : 'a. 'a level_log;
-      info : 'a. 'a level_log;
-      debug : 'a. 'a level_log; }
-end
+let should_log l = match level () with
+| None -> false | Some l' -> l <= l'
 
-type t = Log.t
+let show_ppf = ref Format.std_formatter
+let err_ppf = ref Format.err_formatter
+let warn_ppf = ref Format.err_formatter
+let info_ppf = ref Format.err_formatter
+let debug_ppf = ref Format.err_formatter
 
-type verbosity = [ `Verbose | `Normal | `Error | `Quiet ]
-let drop_msg verb l = match verb with
-| `Normal -> (match l with `Debug -> true | _ -> false)
-| `Error -> (match l with `Error -> false | _ -> true)
-| `Quiet -> true
-| `Verbose -> false
+let set_formatter spec ppf = match spec with
+| `Level Show -> show_ppf := ppf
+| `Level Error -> err_ppf := ppf
+| `Level Warning -> warn_ppf := ppf
+| `Level Info -> info_ppf := ppf
+| `Level Debug -> debug_ppf := ppf
+| `All ->
+    show_ppf := ppf; err_ppf := ppf; warn_ppf := ppf; info_ppf := ppf;
+    debug_ppf := ppf
 
-type reporter = { report : 'a. 'a log }
+(* Logging *)
 
-let str_of_level = function
-  | `Debug -> "debug" | `Error -> "error"
-  | `Info -> "info" | `Warning -> "warning"
+let dumb = Format.err_formatter (* any will do *)
+let err_count = ref 0
+let warn_count = ref 0
 
-let pp_time ppf () =
-  let tz_offset local utc =      (* computes the timezone offset w.r.t. utc. *)
-    let dd = local.Unix.tm_yday - utc.Unix.tm_yday in
-    let dh = local.Unix.tm_hour - utc.Unix.tm_hour in
-    let dm = dh * 60 + (local.Unix.tm_min - utc.Unix.tm_min) in
-    if dd = 1 || dd < -1 (* year wrap *) then dm + (24 * 60) else
-    if dd = -1 || dd > 1 (* year wrap *) then dm - (24 * 60) else
-    dm (* same day *)
+let kmsg ?header k l fmt =
+  let default d = match header with None -> d | Some h -> h in
+  let k _ = k () in
+  if not (should_log l) then Format.ikfprintf k dumb fmt else
+  let pp_msg ppf style label fmt =
+    Format.kfprintf k ppf
+      ("[%a] @[" ^^ fmt ^^ "@]@.") (Fmt.pp_styled_str style) label
   in
-  let now = Unix.gettimeofday () in
-  let local = Unix.localtime now in
-  let utc = Unix.gmtime now in
-  let tz = tz_offset local utc in
-  Format.fprintf ppf "%04d-%02d-%02d %02d:%02d:%02d%c%02d%02d"
-    (local.Unix.tm_year + 1900) (local.Unix.tm_mon + 1) local.Unix.tm_mday
-    local.Unix.tm_hour local.Unix.tm_min local.Unix.tm_sec
-    (if tz < 0 then '-' else '+') (tz / 60) (tz mod 60)
+  match l with
+  | Show ->
+      begin match header with
+      | None -> Format.kfprintf k !show_ppf ("@[" ^^ fmt ^^ "@]@.")
+      | Some h -> pp_msg !show_ppf `Bold h fmt
+      end
+  | Error ->
+      incr err_count; pp_msg !err_ppf `Red (default "ERROR") fmt
+  | Warning ->
+      incr warn_count; pp_msg !warn_ppf `Yellow (default "WARNING") fmt
+  | Info ->
+      pp_msg !info_ppf `Blue (default "INFO") fmt
+  | Debug ->
+      pp_msg !debug_ppf `Green (default "DEBUG") fmt
 
-let pp_start ppf l = Format.fprintf ppf "%a [%s] @[" pp_time () (str_of_level l)
-let pp_end ppf = Format.fprintf ppf "@]@."
-let nil_reporter =
-  { report = fun _ fmt -> Format.ifprintf Format.err_formatter fmt }
+let msg ?header l fmt = kmsg ?header (fun () -> ()) l fmt
+let msg_driver_fault ?header l fmt =
+  msg ?header l ("[%a] " ^^ fmt) (Fmt.pp_styled_str `Red) "DRIVER FAULT"
 
-let formatter_reporter verbosity ppf = { report = fun l fmt ->
-  if drop_msg verbosity l then Format.ifprintf ppf fmt else
-  let prefix = match l with
-  | `Debug -> "Debug: " | `Error -> "Error: " | `Warning -> "Warning: "
-  | `Info -> "Info: "
-  in
-  let flush ppf = Format.pp_print_newline ppf () in
-  Format.pp_print_string ppf prefix;
-  Format.kfprintf flush ppf fmt
-}
+let show ?header fmt = msg ?header Show fmt
+let err ?header fmt = msg ?header Error fmt
+let warn ?header fmt = msg ?header Warning fmt
+let info ?header fmt = msg ?header Info fmt
+let debug ?header fmt = msg ?header Debug fmt
 
-let timed_formatter_reporter verbosity ppf = { report = fun l fmt ->
-  if drop_msg verbosity l then Format.ifprintf ppf fmt else
-  (pp_start ppf l; Format.kfprintf pp_end ppf fmt) }
+(* Log monitoring *)
 
-let errors = ref 0
-let r = ref nil_reporter
-let set_reporter r' = r := r'
-let log l fmt = if l = `Error then incr errors; !r.report l fmt
-let err fmt = log `Error fmt
-let warn fmt = log `Warning fmt
-let info fmt = log `Info fmt
-let debug fmt = log `Debug fmt
-let default_log = Log.({ log; err; warn; info; debug })
+let err_count () = !err_count
+let warn_count () = !warn_count
 
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli
+   Copyright 2014 Daniel C. Bünzli.
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
