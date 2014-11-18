@@ -1,5 +1,9 @@
+*.byte
+*.native
 _build
 tmp
 *~
 \#*#
 CLOCK.org
+attic/fonts
+attic/images

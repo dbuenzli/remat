@@ -13,7 +13,7 @@ action ()
       default)      $OCAMLBUILD remat.native ;;
       tests)        echo "No tests for now" ;;
       doc-user)     shift; pkg/markdown $* doc/user-doc.css doc/howto.md \
-                    doc/describe.md doc/api.md doc/PROJECT.md;;
+                    doc/describe.md doc/api.md ;;
       doc-remat)    shift; pkg-doc $* doc/remat.docdir ;;
       doc-rematd)   shift; pkg-doc $* doc/rematd.docdir ;;
       remat)        shift; $OCAMLBUILD $* remat.native ;;
