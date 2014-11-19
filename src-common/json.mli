@@ -7,7 +7,8 @@
 (** JSON decoding combinators.
 
     High-level JSON decoding combinators using [Jsonm] and
-    applicative functors.
+    applicative functors (why ? sometimes you may want a monad, e.g.
+    switch).
 
     {b Limitations.} Blocking. Stops on first error. Considers
     multiple member name definition as an error. Lookahead is very
