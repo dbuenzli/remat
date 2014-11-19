@@ -1,21 +1,21 @@
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli. All rights reserved.
    Distributed under the BSD3 license, see license at the end of the file.
-   %%NAME%% release %%VERSION%%
+   %%NAME%% version %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Remat main program. *)
+(** Command definition. *)
 
 open Cmdliner
 
-let cmds = [ Cmd_convert.cmd; Cmd_browser.cmd; Cmd_publish.cmd; Cmd_help.cmd ]
+type init =
+  { fmt_utf_8_enabled : bool;
+    fmt_style_tags : [ `Ansi | `None ];
+    log_level : Log.level option;
+    workers : int; }
 
-let main () = match Term.eval_choice Cmd_default.cmd cmds with
-| `Ok ret -> exit ret
-| `Error _ -> exit 1
-| `Help | `Version -> exit 0
-
-let () = main ()
+val cmd : string -> (init -> 'a Term.ret) Term.t -> doc:string ->
+  man:Manpage.block list -> see_also:string list -> 'a Term.t * Term.info
 
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli

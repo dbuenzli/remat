@@ -1,28 +1,51 @@
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli. All rights reserved.
+   Copyright (c) 2014 Daniel C. Bünzli. All rights reserved.
    Distributed under the BSD3 license, see license at the end of the file.
-   %%NAME%% version %%VERSION%%
+   %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Remat commands. *)
+open Prelude
 
-val convert : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The [convert] command. *)
+let publish db dest force init =
+  try
+    if Sys.file_exists dest && not force
+    then `Error (false, str "%s already exists" dest) else
+    let db = Db.create db in
+    let dst = Api_data.create db dest in
+    match Api_data.publish dst with `Ok -> `Ok 0 | `Fail -> `Ok 1
+  with Sys_error e -> Ui.log_err "%s" e; `Ok 1
 
-val browser : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The [browser] command. *)
+(* Command line interface *)
 
-val publish : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The [publish] command. *)
+open Cmdliner
 
-val help : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The [help] command. *)
+let db =
+  let default = Filename.concat Filename.current_dir_name "ldb" in
+  let doc = "Archive database directory." in
+  Arg.(value & opt dir default & info ["db"] ~docv:"DIR" ~doc)
 
-val default : int Cmdliner.Term.t * Cmdliner.Term.info
-(** The default command. *)
+let dest =
+  let doc = "Destination directory (must not exist)." in
+  Arg.(required & pos 0 (some string) None & info [] ~docv:"DEST" ~doc)
+
+let force =
+  let doc = "Do not fail if destination directory exists." in
+  Arg.(value & flag & info ["f"; "force"] ~doc)
+
+let cmd =
+  let doc = "generate the webserver static data files for an archive" in
+  let man = [
+    `S "DESCRIPTION";
+    `P "The $(b,$(tname)) command generates the static data files that
+        can be used with Remat's web client.";
+    `S "SEE ALSO";
+    `P "$(mname)(1)" ]
+  in
+  let publish = Term.(pure publish $ db $ dest $ force) in
+  Cmd_base.cmd "publish" publish ~doc ~man ~see_also:[]
 
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli
+   Copyright (c) 2014 Daniel C. Bünzli.
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without

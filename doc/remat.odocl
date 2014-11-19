@@ -1,5 +1,11 @@
 Api_data
 Browser
+Cmd_base
+Cmd_browser
+Cmd_convert
+Cmd_default
+Cmd_help
+Cmd_publish
 Db
 FineReader
 Fmt
@@ -12,7 +18,6 @@ Pdoc
 Prelude
 Rect
 Remat
-Remat_cmd
 Size
 Sysm
 Tdoc

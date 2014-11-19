@@ -1,24 +1,43 @@
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli. All rights reserved.
+   Copyright (c) 2014 Daniel C. Bünzli. All rights reserved.
    Distributed under the BSD3 license, see license at the end of the file.
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Remat main program. *)
+let help man_format topic commands init = match topic with
+| None -> `Help (man_format, None)
+| Some topic ->
+    let topics = "topics" :: commands in
+    let topics = List.rev_append [] topics in
+    let conv, _ = Cmdliner.Arg.enum (List.rev_map (fun s -> (s, s)) topics) in
+    match conv topic with
+    | `Error e -> `Error (false, e)
+    | `Ok t when t = "topics" -> List.iter print_endline topics; `Ok 0
+    | `Ok t when List.mem t commands -> `Help (man_format, Some t)
+    | `Ok t -> assert false
+
+(* Command line interface *)
 
 open Cmdliner
 
-let cmds = [ Cmd_convert.cmd; Cmd_browser.cmd; Cmd_publish.cmd; Cmd_help.cmd ]
+let topic =
+  let doc = "The topic to get help on, `topics' lists the topics." in
+  Arg.(value & pos 0 (some string) None & info [] ~docv:"TOPIC" ~doc)
 
-let main () = match Term.eval_choice Cmd_default.cmd cmds with
-| `Ok ret -> exit ret
-| `Error _ -> exit 1
-| `Help | `Version -> exit 0
-
-let () = main ()
+let cmd =
+  let doc = "shows help about $(mname)" in
+  let man = [
+    `S "DESCRIPTION";
+    `P "The $(b,$(tname)) command shows help about $(tname) and its commands.";
+    `P "Use `topics' as $(i,TOPIC) to get a list of topics.";
+    `S "SEE ALSO";
+    `P "$(tname)(1)"; ]
+  in
+  let help = Term.(pure help $ Term.man_format $ topic $ Term.choice_names) in
+  Cmd_base.cmd "help" help ~doc ~man ~see_also:[]
 
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli
+   Copyright (c) 2014 Daniel C. Bünzli.
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without

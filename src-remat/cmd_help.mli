@@ -1,24 +1,16 @@
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli. All rights reserved.
+   Copyright (c) 2014 Daniel C. Bünzli. All rights reserved.
    Distributed under the BSD3 license, see license at the end of the file.
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Remat main program. *)
+(** Remat [help] command. *)
 
-open Cmdliner
-
-let cmds = [ Cmd_convert.cmd; Cmd_browser.cmd; Cmd_publish.cmd; Cmd_help.cmd ]
-
-let main () = match Term.eval_choice Cmd_default.cmd cmds with
-| `Ok ret -> exit ret
-| `Error _ -> exit 1
-| `Help | `Version -> exit 0
-
-let () = main ()
+val cmd : int Cmdliner.Term.t * Cmdliner.Term.info
+(** The [help] command. *)
 
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli
+   Copyright (c) 2014 Daniel C. Bünzli.
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without

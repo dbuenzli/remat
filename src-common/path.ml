@@ -139,7 +139,7 @@ let of_string s =                                (* N.B. collapses // to / *)
   | segs -> of_segs (`Rel segs)
 
 let quote p = Filename.quote (to_string p)
-let pp ppf p = As_fmt.pp_str ppf (to_string p)
+let pp ppf p = Fmt.pp_str ppf (to_string p)
 
 (* File extensions *)
 
@@ -177,7 +177,7 @@ let ext_of_string = function
 | "tar" -> `Tar | "tbz"  -> `Tbz | "xml" -> `Xml | "zip" -> `Zip
 | ext -> `Ext ext
 
-let pp_ext ppf e = As_fmt.pp_str ppf (ext_to_string e)
+let pp_ext ppf e = Fmt.pp_str ppf (ext_to_string e)
 
 let ext p = match List.rev (segs p) with
 | [] -> None

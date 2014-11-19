@@ -1,15 +1,16 @@
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli. All rights reserved.
+   Copyright (c) 2014 Daniel C. Bünzli. All rights reserved.
    Distributed under the BSD3 license, see license at the end of the file.
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-let str = Printf.sprintf
-let quote s = str "`%s'" s
-let pp ff fmt = Format.fprintf ff fmt
+open Prelude
+
+let quote = Cmdliner.Arg.doc_quote
+
 let pp_status ff (f, r) = match r with
-| `Status s -> pp ff "%s" s
-| _ -> pp ff "%s" f
+| `Status s -> Fmt.pp ff "%s" s
+| _ -> Fmt.pp ff "%s" f
 
 let filename_update_suffix f suff = try (Filename.chop_extension f) ^ suff with
 | Invalid_argument _ -> (* no ext *) f ^ suff
@@ -21,17 +22,6 @@ let apply f x ~finally y =
   let result = try f x with exn -> finally y; raise exn in
   finally y;
   result
-
-let set_verbosity quiet =
-  let verb = match List.length quiet with
-  | 0 -> `Normal | 1 -> `Error | _ -> `Quiet
-  in
-  Ui.set_verbosity verb; (* TODO reconcile log and UI verbosity *)
-  (* Log.set_reporter (Log.formatter_reporter verb Format.std_formatter) *)
-  (* TODO *)
-  ()
-
-(* convert *)
 
 type convert_func_log =
   { ic : 'a. ('a, Format.formatter, unit, unit) Pervasives.format4 -> 'a;
@@ -53,7 +43,7 @@ let finereader_to_pbin log _ ic oc =
 
 let pbin_to_ptext log _ ic oc = match Pdoc.input ic with
 | `Error -> log.ic "invalid file format or corrupted file"; `Error
-| `Ok d -> pp (Format.formatter_of_out_channel oc) "%a@?" Pdoc.pp_txt d; `Ok
+| `Ok d -> Fmt.pp (Format.formatter_of_out_channel oc) "%a@?" Pdoc.pp_txt d; `Ok
 
 type fmt = [ `FineReader | `Pdoc_binary | `Pdoc_text | `Pdoc_json ]
 
@@ -99,7 +89,7 @@ let io i_fmt i_suffix i o_fmt o_suffix o_file o_dir =
 let err_convert i o convs =
   let msg = match convs with
   | [] -> str "%s is an output only format it cannot be converted."
-    (quote (fmt_to_string i))
+    ( quote (fmt_to_string i))
   | _ ->
     str "%s can be converted to %s but not to %s."
       (quote (fmt_to_string i))
@@ -108,7 +98,7 @@ let err_convert i o convs =
   in
   `Error (true, msg)
 
-let convert _ workers io =
+let convert io init =
   let convs = fmt_conversions io.i_fmt in
   let o_fmt (fmt, _) = fmt = io.o_fmt in
   match try Some (List.find o_fmt convs) with Not_found -> None with
@@ -150,7 +140,7 @@ let convert _ workers io =
       with
       | Sys_error e -> Ui.log_err "%s" e; err_status ()
     in
-    let workers = match io.o with Some (`Dir _) | None -> workers
+    let workers = match io.o with Some (`Dir _) | None -> init.Cmd_base.workers
       | Some (`File o) -> if o <> "-" then truncate o; 1
     in
     let args = () (* for now *) in
@@ -161,64 +151,9 @@ let convert _ workers io =
     in
     Ui.show_mapf pp_status action m; `Ok 0
 
-(* browser *)
-
-let browser i_suffix src dst nmap =
-  try
-    let image f = Filename.check_suffix f i_suffix in
-    let files = List.filter image (Array.to_list (Sys.readdir src)) in
-    let b = Browser.of_files nmap files in
-    match Browser.output_files b dst with
-    | `Ok -> `Ok 0
-    | `Error e -> Ui.log_err "%s" e; `Ok 1
-  with Sys_error e -> Ui.log_err "%s" e; `Ok 1
-
-(* publish *)
-
-let publish verbosity workers db dest force =
-  try
-    if Sys.file_exists dest && not force
-    then `Error (false, str "%s already exists" dest) else
-    let db = Db.create db in
-    let dst = Api_data.create db dest in
-    match Api_data.publish dst with `Ok -> `Ok 0 | `Fail -> `Ok 1
-  with Sys_error e -> Ui.log_err "%s" e; `Ok 1
-
-(* help *)
-
-let help man_format topic commands = match topic with
-| None -> `Help (man_format, None)
-| Some topic ->
-    let topics = "topics" :: commands in
-    let topics = List.rev_append [] topics in
-    let conv, _ = Cmdliner.Arg.enum (List.rev_map (fun s -> (s, s)) topics) in
-    match conv topic with
-    | `Error e -> `Error (false, e)
-    | `Ok t when t = "topics" -> List.iter print_endline topics; `Ok 0
-    | `Ok t when List.mem t commands -> `Help (man_format, Some t)
-    | `Ok t -> assert false
-
-(* default *)
-
-let default _ = `Help (`Pager, None)
-
 (* Command line interface *)
 
-open Cmdliner;;
-
-let verbosity =
-  let doc = "If specified once, only error messages are written to standard
-             error. If specified more than once, nothing is ever printed to
-             standard error."
-  in
-  let quiet = Arg.(value & flag_all & info ["q"; "quiet"] ~doc) in
-  Term.(pure set_verbosity $ quiet)
-
-let workers =
-  let doc = "Number of worker processes to use. Defaults to machine processor
-             count."
-  in
-  Arg.(value & opt int (Workers.cpu_count ()) & info [ "workers" ] ~doc)
+open Cmdliner
 
 let io =
   let fmt = Arg.enum string_to_fmt_assoc in
@@ -264,7 +199,7 @@ let io =
   in
   Term.(pure io $ i_fmt $ i_suffix $ i $ o_fmt $ o_suffix $ o_file $ o_dir)
 
-let convert =
+let cmd =
   let doc = "converts OCR data from/to various formats and representations." in
   let man = [
     `S "DESCRIPTION";
@@ -312,120 +247,11 @@ let convert =
     `S "SEE ALSO";
     `P "$(mname)(1)"; ]
   in
-  Term.(ret (pure convert $ verbosity $ workers $ io)),
-  Term.info "convert" ~doc ~man
-
-let browser =
-  let src =
-    let doc = "Input directory with image files." in
-    Arg.(required & pos 0 (some dir) None & info [] ~docv:"SRC" ~doc)
-  in
-  let dst =
-    let doc = "Output directory." in
-    Arg.(required & pos 1 (some dir) None & info [] ~docv:"DST" ~doc)
-  in
-  let i_suffix =
-    let doc = "In $(i,SRC) only files ending with $(docv) are processed." in
-    let docv = "SUFFIX" in
-    Arg.(value & opt string ".png" & info ["I"; "in-suffix"] ~docv ~doc)
-  in
-  let names =
-    let doc = "Map the filename prefix $(i,PREFIX) to $(i,NAME) in the browsing
-               interface. This option is repeatable."
-    in
-    let docv = "PREFIX,NAME" in
-    Arg.(value & opt_all (pair string string) [] & info ["m";"map"] ~docv ~doc)
-  in
-  let doc = "generate an OCR data browsing interface" in
-  let man = [
-    `S "DESCRIPTION";
-    `P "The $(b,$(tname)) command generates a primitive browsing interface
-        for visualising OCR data.";
-    `P "A browsing hierarchy for the images in the $(i,SRC) directory
-        is defined according to their file name (see below). The resulting
-        interface is written in the $(i,DST) directory as a set of HTML and
-        JavaScript files.";
-    `S "FILENAME CONVENTION";
-    `P "The general pattern is:";
-    `P "$PREFIX_YYYY_MM_DD[_XX]*_PAGENUM[_XX]*.SUFFIX";
-    `P "The analysis starts from the end, the first parsed number defines
-        PAGENUM, after that at three or less numbers are parsed, defining
-        an optional day DD, optional month MM and optional year YYYY.";
-    `P "The PREFIX part can be mapped in the browsing
-        interface to a more readable name with the $(b,-m)
-        option. Unique prefixes together with the [_XX] part define top
-        level browsing groups.";
-    `P "The YYYY_MM_DD part defines a date based browsing group.";
-    `P "Files that share the same prefix until PAGENUM are presented on
-        the same page.";
-    `S "SEE ALSO";
-    `P "$(mname)(1)" ]
-  in
-  Term.(ret (pure browser $ i_suffix $ src $ dst $ names)),
-  Term.info "browser" ~doc ~man
-
-let publish =
-  let db =
-    let default = Filename.concat Filename.current_dir_name "ldb" in
-    let doc = "Archive database directory." in
-    Arg.(value & opt dir default & info ["db"] ~docv:"DIR" ~doc)
-  in
-  let dest =
-    let doc = "Destination directory (must not exist)." in
-    Arg.(required & pos 0 (some string) None & info [] ~docv:"DEST" ~doc)
-  in
-  let force =
-    let doc = "Do not fail if destination directory exists." in
-    Arg.(value & flag & info ["f"; "force"] ~doc)
-  in
-  let doc = "generate the webserver static data files for an archive" in
-  let man = [
-    `S "DESCRIPTION";
-    `P "The $(b,$(tname)) command generates the static data files that
-        can be used with Remat's web client.";
-    `S "SEE ALSO";
-    `P "$(mname)(1)" ]
-  in
-  Term.(ret (pure publish $ verbosity $ workers $ db $ dest $ force)),
-  Term.info "publish" ~doc ~man
-
-let help =
-  let topic =
-    let doc = "The topic to get help on, `topics' lists the topics." in
-    Arg.(value & pos 0 (some string) None & info [] ~docv:"TOPIC" ~doc)
-  in
-  let doc = "shows help about $(mname)" in
-  let man = [
-    `S "DESCRIPTION";
-    `P "The $(b,$(tname)) command shows help about $(tname) and its commands.";
-    `P "Use `topics' as $(i,TOPIC) to get a list of topics.";
-    `S "SEE ALSO";
-    `P "$(tname)(1)"; ]
-  in
-  Term.(ret (pure help $ Term.man_format $ topic $ Term.choice_names)),
-  Term.info "help" ~doc ~man
-
-let default =
-  let version = "%%VERSION%%" in
-  let doc = "manipulates optical character recognition (OCR) data" in
-  let man = [
-    `S "DESCRIPTION";
-    `P "$(b,$(mname)) is a command line tool to inspect and massage
-        OCR data for the web publication of digitized documents
-        with $(b,rematd).";
-    `P "Use '$(mname) help $(i,COMMAND)' for information about $(i,COMMAND).";
-    `S "BUGS AND FEEDBACK";
-    `P "Email them to <%%AUTHORS%%>.";
-    `S "AUTHOR";
-    `P "Daniel C. Buenzli, $(i,http://erratique.ch)";
-    `S "SEE ALSO";
-    `P "rematd(1)" ]
-  in
-  Term.(ret (pure default $ pure ())),
-  Term.info "remat" ~version ~doc ~man
+  let convert = Term.(pure convert $ io) in
+  Cmd_base.cmd "convert" convert ~doc ~man ~see_also:[]
 
 (*---------------------------------------------------------------------------
-   Copyright 2012 Daniel C. Bünzli
+   Copyright (c) 2014 Daniel C. Bünzli.
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
