@@ -63,6 +63,13 @@ val pp_lines : string formatter
 val pp_range : ((int * int) * (int * int)) formatter
 (** [pp_range] formats a range. *)
 
+val pp_now : ?rfc:bool -> unit formatter
+(** [pp_now space] formats the current time according to
+    {{:https://tools.ietf.org/html/rfc3339}RFC3339} if [rfc] is
+    [false] (default) date and time are separated by a space
+    character rather than a ['T']; use [true] if you need a timestamp
+    that matches the [date-time] production of RFC3339. *)
+
 val pp_doomed : string formatter
 (** [pp_doomed] should be used for printing a message when reasonable
     assumptions are being violated. The string should be a short

@@ -43,6 +43,25 @@ let pp_white_str ~spaces ppf s =
 let pp_text = pp_white_str ~spaces:true
 let pp_lines = pp_white_str ~spaces:false
 let pp_range ppf ((l0, c0), (l1, c1)) = pp ppf "%d.%d-%d.%d" l0 c0 l1 c1
+let pp_now ?(rfc = false) ppf () =
+  let tz_offset local utc =      (* computes the timezone offset w.r.t. utc. *)
+    let dd = local.Unix.tm_yday - utc.Unix.tm_yday in
+    let dh = local.Unix.tm_hour - utc.Unix.tm_hour in
+    let dm = dh * 60 + (local.Unix.tm_min - utc.Unix.tm_min) in
+    if dd = 1 || dd < -1 (* year wrap *) then dm + (24 * 60) else
+    if dd = -1 || dd > 1 (* year wrap *) then dm - (24 * 60) else
+    dm (* same day *)
+  in
+  let now = Unix.gettimeofday () in
+  let local = Unix.localtime now in
+  let utc = Unix.gmtime now in
+  let tz = tz_offset local utc in
+  let sep = if rfc then 'T' else ' ' in
+  Format.fprintf ppf "%04d-%02d-%02d%c%02d:%02d:%02d%c%02d%02d"
+    (local.Unix.tm_year + 1900) (local.Unix.tm_mon + 1) local.Unix.tm_mday
+    sep
+    local.Unix.tm_hour local.Unix.tm_min local.Unix.tm_sec
+    (if tz < 0 then '-' else '+') (tz / 60) (tz mod 60)
 
 let pp_doomed ppf reason =
   pp ppf "Something@ unreasonable@ is@ going@ on (%a).@ You@ are@ doomed."
