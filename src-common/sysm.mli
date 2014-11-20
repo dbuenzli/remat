@@ -74,8 +74,10 @@ module Path : sig
 
   (** {1:pathops Path operations} *)
 
-  val exists : path -> bool result
-  (** [exists path] is [true] iff [path] exists. *)
+  val exists : ?err:bool -> path -> bool result
+  (** [exists path] is [true] iff [path] exists.
+      If [err] is [true] (defaults to [false]) an error is returned
+      when the file doesn't exist. *)
 
   val move : ?force:bool -> path -> path -> unit result
   (** [move ~force src dst] moves path [src] to [dst]. If [force] is
@@ -90,8 +92,10 @@ module File : sig
       {b Note.} When paths are {{!Path.rel}relative} they are expressed
       relative to the {{!Dir.getcwd}current working directory}. *)
 
-  val exists : path -> bool result
-  (** [exists file] is [true] iff [file] exists and is not a directory. *)
+  val exists : ?err:bool -> path -> bool result
+  (** [exists file] is [true] iff [file] exists and is not a directory.
+      If [err] is [true] (defaults to [false]) an error is returned
+      when the file doesn't exist. *)
 
   val dev_null : path
   (** [dev_null] represents a file that discards all writes. *)
@@ -158,8 +162,10 @@ module Dir : sig
   {b Note.} When paths are {{!Path.rel}relative} they are expressed
   relative to the {{!Dir.getcwd}current working directory}. *)
 
-  val exists : path -> bool result
-  (** [exists dir] is [true] if directory [dir] exists. *)
+  val exists : ?err:bool -> path -> bool result
+  (** [exists dir] is [true] if directory [dir] exists.
+      If [err] is [true] (defaults to [false]) an error is returned
+      when the file doesn't exist. *)
 
   val getcwd : unit -> path result
   (** [getcwd ()] is the current working directory. *)
@@ -187,8 +193,10 @@ val get_env : string -> string result
 
 (** {1:executing_commands Executing commands} *)
 
-val exists : string -> bool result
-(** [exists cmd] is [true] if [cmd] exists and can be invoked. *)
+val exists : ?err:bool -> string -> bool result
+(** [exists cmd] is [true] if [cmd] exists and can be invoked.
+    If [err] is [true] (defaults to [false]) an error is returned
+    when the command doesn't exist. *)
 
 val exec_ret : string -> string list -> int
 (** [exec_ret cmd args] executes [cmd] with arguments [args] and
