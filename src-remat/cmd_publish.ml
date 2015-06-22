@@ -4,36 +4,48 @@
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-open Prelude
+open Rresult
+open Bos
 
-let publish db dest force init =
-  try
-    if Sys.file_exists dest && not force
-    then `Error (false, str "%s already exists" dest) else
-    let db = Db.create db in
-    let dst = Api_data.create db dest in
-    match Api_data.publish dst with `Ok -> `Ok 0 | `Fail -> `Ok 1
-  with Sys_error e -> Ui.log_err "%s" e; `Ok 1
+let cmd_error = function
+| Error (`Msg e) -> `Error (false, e)
+| Ok v -> `Ok v
+
+let publish repo_dir dest force init =
+  begin
+    let dst = Path.of_string dest in
+    OS.Dir.exists dst >>= fun exists ->
+    if exists && not force
+    then R.error_msgf "%s already exists use `-f' to overwrite" dest else
+    begin
+      Descr.create (Path.of_string repo_dir)
+      >>= (fun repo -> Api.(write (Api_gen.create repo dst)))
+      >>= fun () -> R.ok 0
+    end
+    |> Log.kon_error_msg ~use:(Ok 1)
+  end
+  |> cmd_error
 
 (* Command line interface *)
 
 open Cmdliner
 
-let db =
-  let default = Filename.concat Filename.current_dir_name "ldb" in
-  let doc = "Archive database directory." in
-  Arg.(value & opt dir default & info ["db"] ~docv:"DIR" ~doc)
+let repo =
+  let default = Filename.concat Filename.current_dir_name "remat-repo" in
+  let doc = "Repository description directory." in
+  Arg.(value & opt dir default & info ["repo"] ~docv:"DIR" ~doc)
 
 let dest =
+  let default = Filename.concat Filename.current_dir_name "remat-data" in
   let doc = "Destination directory (must not exist)." in
-  Arg.(required & pos 0 (some string) None & info [] ~docv:"DEST" ~doc)
+  Arg.(value & pos 0 string default & info [] ~docv:"DEST" ~doc)
 
 let force =
   let doc = "Do not fail if destination directory exists." in
   Arg.(value & flag & info ["f"; "force"] ~doc)
 
 let cmd =
-  let doc = "generate the webserver static data files for an archive" in
+  let doc = "generate the webserver static data files for a repository" in
   let man = [
     `S "DESCRIPTION";
     `P "The $(b,$(tname)) command generates the static data files that
@@ -41,7 +53,7 @@ let cmd =
     `S "SEE ALSO";
     `P "$(mname)(1)" ]
   in
-  let publish = Term.(pure publish $ db $ dest $ force) in
+  let publish = Term.(pure publish $ repo $ dest $ force) in
   Cmd_base.cmd "publish" publish ~doc ~man ~see_also:[]
 
 (*---------------------------------------------------------------------------

@@ -1,0 +1,42 @@
+{
+  "name":
+  { "en": { "text": "By date", "href": "date" },
+    "fr": { "text": "Par date", "href": "date" },
+    "de": { "text": "Nach Datum", "href": "Datum" }},
+
+  "string_maps":
+  { "month_en":
+    { "00": "???", "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr",
+      "05": "May", "06": "Jun", "07": "Jul", "08": "Aug", "09": "Sep",
+      "10": "Oct", "11": "Nov", "12": "Dec" },
+    "month_fr":
+    { "00": "???", "01": "jan", "02": "fév", "03": "mar", "04": "avr",
+      "05": "mai", "06": "jui", "07": "jul", "08": "aoû", "09": "sep",
+      "10": "oct", "11": "nov", "12": "déc" },
+    "month_de":
+    { "00": "???", "01": "Jan", "02": "Feb", "03": "Mär", "04": "Apr",
+      "05": "Mai", "06": "Jun", "07": "Jul", "08": "Aug", "09": "Sep",
+      "10": "Okt", "11": "Nov", "12": "Dez" },
+    "month_it":
+    { "00": "???", "01": "Gen", "02": "Feb", "03": "Mar", "04": "Apr",
+      "05": "Mag", "06": "Giu", "07": "Lug", "08": "Ago", "09": "Set",
+      "10": "Ott", "11": "Nov", "12": "Dic" }},
+
+  "doc-vars": { "date": ["date"] },
+  "key": { "*": { "format": "$(date)" }},
+  "headings":
+  { "en":
+    [{ "label": "$(date,YYYY)", "toc": "multiples", "toc_multiples": 10 },
+     { "label": "$(date,date_MM,map_month_en)" }],
+    "fr":
+    [{ "label": "$(date,YYYY)", "toc": "multiples", "toc_multiples": 10 },
+     { "label": "$(date,date_MM,map_month_fr)" }],
+    "de":
+    [{ "label": "$(date,YYYY)", "toc": "multiples", "toc_multiples": 10 },
+     { "label": "$(date,date_MM,map_month_de)" }],
+    "it":
+    [{ "label": "$(date,YYYY)", "toc": "multiples", "toc_multiples": 10 },
+     { "label": "$(date,date_MM,map_month_de)" }] },
+
+  "doc_ref": { "*": { "descr": "$(date,date_dd)" } }
+}

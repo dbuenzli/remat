@@ -1,0 +1,11 @@
+{
+  "name":
+  { "en": { "text": "By issue", "href": "issue" },
+    "fr": { "text": "Par édition", "href": "édition" },
+    "de": { "text": "Nach Aufgabe", "href": "Aufgabe" }},
+
+  "doc_vars": { "volume": ["volume"], "issue": ["issue"] },
+  "key": { "*" : "$(volume)-$(issue)" },
+  "headings": [],
+  "doc_ref": { "*" : { "descr": "$(volume) ($(issue))" }}
+}

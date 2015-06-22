@@ -1,0 +1,20 @@
+{
+  "version": 0,
+  "ui_locales":
+  [
+    { "locale" : "en", "href" : "en" },
+    { "locale" : "fr", "href" : "fr" }
+  ],
+  "name":
+  {
+    "en": "Digital CIRA",
+    "fr": "CIRA numérique"
+  },
+  "indexes": ["title", "lang"],
+  "search_href": "s",
+  "publisher":
+  {
+    "en": { "text" : "CIRA", "href" : "http://www.cira.ch/home" },
+    "fr": { "text" : "CIRA", "href" : "http://www.cira.ch/accueil" }
+  }
+}

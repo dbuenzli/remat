@@ -1,0 +1,19 @@
+{
+  "name":
+  { "en": { "text": "By title", "href": "title" },
+    "fr": { "text": "Par titre", "href": "titre" },
+    "de": { "text": "Nach Titel", "href": "titel" }},
+
+  "doc_vars":
+  { "title": ["title"],  "title_prefix": ["title_prefix"],  "date": ["date"] },
+
+  "key":
+  { "*": "$(title)-$(title_prefix)-$(date)" },
+
+  "headings":
+  { "*": [{ "label": "$(title,letter_1)", "toc": "all" }]},
+
+  "doc_ref":
+  { "*": { "descr": "$(title_prefix)$(title) — $(date)",
+           "doc_type": true, "doc_count": true }}
+}

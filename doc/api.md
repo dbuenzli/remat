@@ -16,7 +16,7 @@ are [JSON text](http://tools.ietf.org/html/rfc4627).
 
 TODO
 [json-schema](http://json-schema.org/latest/json-schema-core.html)
-descriptions ? 
+descriptions ?
 
 
 Conventions and basic types {#conventions}
@@ -31,8 +31,8 @@ apply. Besides the following basic types are used in the API.
 Relative URIs must be dereferenced *relative* to the URI used to get
 the resource that mentions them. An example is provided in the next
 section.
-    
-In the following example the `href` value is a `Locales.<Uri>`
+
+In the following example the `href` value is a `Locv.<Uri>`
 value.
 
 ```json
@@ -42,25 +42,25 @@ value.
 If this object was returned by `GET`ting the URI:
 
 ```
-http://www.example.org/repo 
+http://www.example.org/repo
 ```
 
-the specified URI is: 
+the specified URI is:
 
-* `http://www.example.org/books` for the english locale. 
+* `http://www.example.org/books` for the english locale.
 * `http://www.example.org/livres` for the french locale.
 
 
-### `Chunked` {#type-Chunked}
+### `Chunked` {#chunked}
 
 A `Chunked.<type>` is either an `Array.<type>` or an object with the
 following members to get the array values chunked in URIs whose
 representations are also `Chunked.<type>` *objects*.
 
 
-| Member name    | Type                | 
+| Member name    | Type                |
 |:---------------|:--------------------|:------------
-| `first_href`   | `Uri`               | URI to first chunk 
+| `first_href`   | `Uri`               | URI to first chunk
 | ?`prev_href`   | `Uri`               | URI to previous chunk
 | ?`next_href`   | `Uri`               | URI to next chunk
 | `last_href`    | `Uri`               | URI to last chunk
@@ -71,6 +71,26 @@ The first chunk has no `prev_href` field. The last chunk has no
 `next_href` field. Hence if both are absent all the values are in a single
 chunk.
 
+
+### Type `Doc_ref` {#doc_ref}
+
+A document reference is a short description and a link to a
+document. Different document references may be used for the same
+document in different contexts.
+
+| Member name    | Type                |
+|:---------------|:--------------------|:-------------------------------
+| `data_href`     | `Uri`               | URI to document data
+| `ui_href`      | `Uri`               | End-user URI to render document
+| `descr`         | `String`           | Document description
+| ?`descr_extra`  | `String`           | Additional description
+| ?`date`        | [`Date_fuzzy`](describe.html#dates) | Document date
+| ?`doc_type`     | [`Doc_type`](describe.html#doc_type) | Document type
+| ?`doc_count`   | `Integer`           | Number of documents in a document set
+
+The `doc_count` member may be present only if `doc_type` is a collection.
+
+
 Base URI and Repository resource {#resource-repository}
 -------------------------------------------------
 
@@ -80,7 +100,7 @@ resource from which the service can be accessed by following
 hyperlinks mentioned in the returned representation.
 
 The base URI is also the root to express
-[end user URIs](#end-user-URI) that allow users to bookmark 
+[end user URIs](#end-user-URI) that allow users to bookmark
 specific parts of the repository's presentation.
 
 The *repository* resource has the indexes of the repository and various
@@ -88,129 +108,112 @@ information about how it should be accessed and presented.
 
 |                    | URI                       | Method | Representation
 |:-------------------|:--------------------------|:-------|:--------------------
-| Repository Resource   | `$B/api/repository.json`  | GET    | JSON `Repo`
+| Repository Resource   | `$B/api/repo.json`  | GET    | JSON [`Repo`](#repo)
 
 
-### Type `Repo` {#type-Repo}
+## Type `Repo` {#repo}
 
 The `Repo` type is an object with the following members.
 
-| Member name    | Type                 | 
+| Member name    | Type                 |
 |:---------------|:---------------------|:------------
-| `version`      | `Integer`            | Remat API version number, currently 0.
-| `locales`      | `Array.<`[`Locale_d`](describe.html#type-Locale_d)`>` \
+| `version`      | `Integer` | Remat API version number, currently 0.
+| `name`         | `Locv.<String>`   | The repository name.
+| `publisher`    | `Locv.<`[`Ui_link`](describe.html#ui_link)`>`  \
+| Link to publisher.
+| `ui_locales`   | `Array.<`[`Ui_locale`](describe.html#ui_locale)`>` \
 | End-user locales.
-| `name`         | `Locales.<String>`   | The repository name.
-| `indexes`      | `Array.<Index>`      | Repository indexes.
+| `indexes`      | `Array.<Locv<`[`Index`](#index)`>>` \
+| References to repository indexes.
 | ?`search_href` | `Uri`                | URI for search queries.
-| `publisher`    | `Locales.<String>`   | Name of the repository publisher.
-| `publisher_href` | `Locales.<Uri>`    | Link to publisher webpage.
 
 
-### Type `Index` {#type-Index}
+Indexes
+-------
 
-An index is an arbitrary tree structure whose nodes are localized
-headings and leaves are document synopses. The root index node define
-the name of the index.
+### Type `Index` {#index}
 
-The `Index` type is an object with the following members.
+An `Index` object has the description of an index and a link to
+the index data.
 
-| Member name    | Type                | 
+The index data is a tree whose internal nodes are headings and leaves
+document references.
+
+
+| Member name    | Type                |
 |:---------------|:--------------------|:------------
-| `ui_href`      | `String`            | User URI.
-| `label`        | `Locales.<String>`   | Heading label.
-| ?`headings_toc`| `Array.<Integer>`   \
-| Indices of (sub)headings that should be in the (sub)headings toc. If absent\
-all should be. If empty no toc.
-| `headings`      | `Array.<Index>`     | (sub)headings.
-| `synopses`      | `Locales.<Chunked.` | Document synopses (index leaves).
-|                 | `<Synopsis>>`       |
-| `synopses_isbd` | `Boolean`           \
-| `true` if synopses descriptions are in ISBD format (used to detect titles).
+| `name`         | [`Ui_link`](describe.html#ui_link) | Index name and UI href
+| `node_href`   | `Uri`               \
+| URI to toplevel [index node](#index_node)
+| ?`descr`       | `String`            | Index description
 
-The `headings*` and `synopses*` members are mutually exclusive.
+The `heading` member of the root [node](#index_node) pointed by `node_href`
+is equal to `name`.
 
-**Note.** If the index *sort order* itself needs localisation, it is
-performed at the level of the repository or document collection in the 
-`indexes` field. 
+### Type `Index_node` {#index_node}
 
-### Type `Synopsis` {#type-Synopsis}
+The `Index_node` type is an object with the following members.
 
-Document synopses are just a short description of a document (base
-document or collection). 
+| Member name    | Type                |
+|:---------------|:--------------------|:------------
+| `heading`        | [`Ui_link`](describe.html#ui_link) \
+| Heading label and UI href
+| `in_toc`        | Boolean             | `true` if in table of contents
+| `child_type`    | `"headings"` or `"doc_refs"` | children type
+| `childs`    | `Array.<`[`Index_node`](#index_node)`>` or \
+              `Array.<`[`Doc_ref`](#doc_ref)`>` | node children
 
-The `Synopsis` type is an object the following members. 
+Documents
+---------
 
-| Member name    | Type                | 
-|:---------------|:--------------------|:-------------------------------
-| `doc_href`     | `Uri`               | URI to document description 
-| `ui_href`      | `Uri`               | User URI
-| `type`         | `Doc_type`          | Document type
-| `descr`        | `Locales.<String>`  | Document description (e.g. ISBD).
-| ?`doc_count`   | `Integer`           | Number of documents in a a collection
+### Type `Doc` {#doc}
 
-The `doc_count` member is present if and only if the synopsis `type`
-is a collection.
-  
+| Member name    | Type                 |
+|:---------------|:---------------------|:------------
+| `doc_type`     | [`Doc_type`](describe.html#doc_type) | Document type.
+| `doc_href`     | `Locv.<`[`Uri`](#describe.html#uri)`>`   \
+| Base end-user URI under the document is available.
+| ?`doc_langs`    | `Array.<`[`Lang`](#lang)`>` \
+| Languages present in the document.
+| `doc_data` | [`Doc_print`](#doc_print) or [`Doc_set`](#doc_set) \
+| Data specific to the `doc_type`
 
-## `Document` resource 
+### Type `Doc_views` {#doc_views}
 
-The *document* resource describes a document, that is either a
-collection or a base document.
-
-|                    | URI                     | Method | Representation
-|:-------------------|:------------------------|:-------|:--------------
-| Document Resource  | `Synopsis.doc_href`     | GET    | JSON `Document`
-
-### Type `Document` {#type-Document}
-
-The `Document` type is either an `Doc_collection` object or 
-a `Doc_printed` object.
-
-### Type `Doc_collection` {#type-Doc_collection}
-
-The `Doc_collection` type is an object with the following members.
-
-| Member name    | Type                 | 
-|:---------------|:---------------------|:-------------------------------
-| `type`         | `Doc_type`           | Document type, always 0.
-| `title`        | `Locales.<String>`   | Collection title
-| `summary`      | `Locales.<String>`   | Collection summary
-| `indexes`      | `Array.<Index>`      | Collection indexes
-
-
-### Type `Doc_printed` {#type-Doc_printed}
-
-| Member name    | Type                 | 
-|:---------------|:---------------------|:-------------------------------
-| `type`         | `Doc_type`           | Document type, always 1.
-| `title`        | `Locales.<String>`   | Document title
-| ?`collection`  | `Doc_collection_ref` | Document collection reference. 
+| Member name    | Type                 |
+|:---------------|:---------------------|:------------
+| `type` | [`Doc_views_type`](describe.html#doc_views_type) \
+| The kind of document that is being viewed.
+| ?`views`       | `Array.<`[`Doc_view`](#doc_view)`>` | Document views.
+| TODO               |               |
 | ?`min_filter`  | `Doc_filter`  | Documentation minification filter.
 | ?`mag_filter`  | `Doc_filter`  | Documentation magnification filter.
-| ?`bilevel`     | `Boolean`     | True if all images are black and white.
 | ?`scale`       | `Doc_scale`     | Initial scale
-| ?`scale_value` | `Float`        | If `scale` is custom. 
-| ?`views`       | `Chunked.<Doc_printed_view>` | Document views.
+| ?`scale_value` | `Float`        | If `scale` is custom.
 
-If the document belongs to a collection it has the `collection` member
-with reference information. `{min,mag}_filter` indicate which filters
-should be used when the view is mignified and magnified. If
-unspecified the TODO `Repo.{min,mag}_filter[_bilevel]` is used.
 
-### Type `Doc_printed_view` {#type-Doc_printed_view}
+### Type `Doc_view` {#doc_view}
 
-The `Doc_printed_view` corresponds to one document view (image).
-
-| Member name    | Type                 | 
-|:---------------|:---------------------|:-------------------------------
-| ?`label`       | `Locales.<String>`   | Page label (e.g. number). 
-| `thumb_href`   | `Uri`                | View image thumbnail uri.
-| `image_href`   | `Uri`                | View image uri.
+| Member name    | Type                 |
+|:---------------|:---------------------|:------------
+| ?`label`       | `String` | View label
+| `thumb_href`   | [`Uri`](describe.html#uri) | View thumbnail
+| `image_href`   | [`Uri`](describe.html#uri) | View image
+| TODO               |               |
 | ?`width`       | `Float`              | View image width in cm.
 | ?`height`      | `Float`              | View image height in cm.
 
-Both `width` and `height` are either present or absent.
+### Type `Doc_set` {#doc_set}
+
+A `Doc_set` is an heterogenous set of *atomic* documents. Documents
+can be sorted according to publisher defined indexes.
+
+| Member name    | Type                 |
+|:---------------|:---------------------|:------------
+| `type` | [`Doc_set_type`](describe.html#doc_set_type) \
+| Nature of the document set
+| `indexes`      | `Array.<Locv<`[`Index`](#index)`>>` \
+| References to document indexes.
 
 
 End user URIs {#end-user-URI}
@@ -239,7 +242,7 @@ The end-user URI defines the locale used in the interface as follows:
 |:------------|:-------------------------------------------
 | `$B/$L/*`   \
 | The locale is `l.locale` where `l` is the first object in the \
-`a.locales` array such that `l.href = $L`.
+`a.locales` array such that `l.ui_href = $L`.
 | `$B/`        \
 | Lookup a locale in the `a.locales` array with the browser language \
 according to the [lookup algorithm][rfc4647] specified in RFC 4647. If none \
@@ -249,14 +252,17 @@ match fallback to the locale `a.locales[0].locale`.
 
 ### URI user inteface outcomes
 
-| URI pattern                   | Expected outcome 
+| URI pattern                   | Expected outcome
 |:--------------------------------|:-----------------------------------------
 | `$B`                         \
-| Redirect to appropriate locale `$L` according to browser language
-| `$B/$L`                      | Redirect to `i/a.indexes[0]`
+| Redirect to appropriate locale `$L` according to browser language (see above)
+| `$B/$L`                      | Redirect to index list
+| `$B/$L/i/$I`                 | Index list
 | `$B/$L/i/$I`                 | Contents of index `$I`
 | `$B/$L/i/$I#k1-k2`           \
 | Contents of index `$I` anchored at `k1-k2`
+| `$B/$L/d/`                 \
+| Redirect to `$B/$L`
 | `$B/$L/d/$D`                 \
 | If `$D` printed document, redirect to `v/1`
 | `$B/$L/d/$C`                 \
@@ -265,9 +271,5 @@ match fallback to the locale `a.locales[0].locale`.
 | If `$C` collection, contents of index `$I`
 | `$B/$L/d/$C/i/$I#k1-k2`        \
 | If `$C` collection, contents of index `$I` anchored at `k1-k2`
-| `$B/$L/d/$C/d/k1/k2/` \
+| `$B/$L/d/$C/k1/k2/` \
 | If `$C` collection `c`, redirect to `../../../i/c.indexes[0]#k1-k2`
-
-
-
-

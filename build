@@ -1,29 +1,56 @@
 #!/bin/sh
-# This script is only used for developement. It is removed by the 
-# distribution process. 
+# This script is only used for developement. It is removed by the
+# distribution process.
 
 set -e
 
 OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -tag debug -classic-display \
-                          -use-ocamlfind"}
+                          -use-ocamlfind \
+                          -plugin-tag package(js_of_ocaml.ocamlbuild)"}
 
-action () 
+action ()
 {
     case $1 in
       default)      $OCAMLBUILD remat.native ;;
       tests)        echo "No tests for now" ;;
-      doc)          shift; action doc-remat $* ;;
-      doc-user)     shift; pkg/markdown $* doc/user-doc.css doc/howto.md \
-                    doc/describe.md doc/api.md ;;
-      doc-remat)    shift; pkg-doc $* doc/remat.docdir ;;
-      doc-rematd)   shift; pkg-doc $* doc/rematd.docdir ;;
-      remat)        shift; $OCAMLBUILD $* remat.native ;;
-      rematd)       shift; $OCAMLBUILD $* rematd.native ;;
+      test)         action remat
+                    action remat-www
+                    ./remat.native publish -f --repo=examples/remat-repo \
+                      _build/src-www/api
+                    ln -sf ../../examples/remat-repo/media _build/src-www/media
+                    reload-browser http://`hostname`/remat/src-www/
+                    ;;
+      doc)          shift;
+                    action doc-user
+                    action doc-remat
+                    action doc-www
+                    if [ "$1" = "-b" ]; then
+                        reload-browser file://$PWD/_build/doc/
+                    fi
+                    ;;
+      doc-user)     shift; pkg/markdown doc/user-doc.css doc/howto.md \
+                    doc/describe.md doc/api.md
+                    if [ "$1" = "-b" ]; then
+                        reload-browser file://$PWD/_build/doc/
+                    fi
+                    ;;
+      doc-remat)    shift; pkg-doc $* -I src-remat doc/remat.docdir ;;
+      doc-rematd)   shift; pkg-doc $* -I src-rematd doc/rematd.docdir ;;
+      doc-www)      shift; pkg-doc $* -I src-www doc/www.docdir ;;
+      remat)        shift; $OCAMLBUILD $* -I src-remat remat.native ;;
+      rematd)       shift; $OCAMLBUILD $* -I src-rematd rematd.native ;;
+      remat-www)    shift; $OCAMLBUILD $* -I src-www \
+                    remat.css remat-msgs.json remat.js index.html \
+                    src-www/fonts/*.eot \
+                    src-www/fonts/*.svg \
+                    src-www/fonts/*.ttf \
+                    src-www/fonts/*.woff \
+                    ;;
       clean)        $OCAMLBUILD -clean ;;
       *)            $OCAMLBUILD $* ;;
     esac
-} 
+}
 
-if [ $# -eq 0 ]; 
-then action default ; 
+if [ $# -eq 0 ];
+then action default ;
 else action $*; fi

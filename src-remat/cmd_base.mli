@@ -7,6 +7,7 @@
 (** Command definition. *)
 
 open Cmdliner
+open Bos
 
 type init =
   { fmt_utf_8_enabled : bool;

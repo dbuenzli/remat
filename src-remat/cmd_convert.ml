@@ -4,7 +4,7 @@
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-open Prelude
+open Bos
 
 let quote = Cmdliner.Arg.doc_quote
 
@@ -37,7 +37,6 @@ let finereader_to_pbin log _ ic oc =
   try
     let d = FineReader.input ~err:fr_log src in
     let pd = Pdoc.of_fineReader ~log:pdoc_log d in
-(*    let size = (Size.size_kb pd) in *)
     Pdoc.output oc pd; `Ok
   with Xmlm.Error (loc, e) -> fr_log loc (Xmlm.error_message e); `Error
 
@@ -88,10 +87,10 @@ let io i_fmt i_suffix i o_fmt o_suffix o_file o_dir =
 
 let err_convert i o convs =
   let msg = match convs with
-  | [] -> str "%s is an output only format it cannot be converted."
+  | [] -> strf "%s is an output only format it cannot be converted."
     ( quote (fmt_to_string i))
   | _ ->
-    str "%s can be converted to %s but not to %s."
+    strf "%s can be converted to %s but not to %s."
       (quote (fmt_to_string i))
       (String.concat ", " (List.map (fun (f, _) -> fmt_to_string f) convs))
       (quote (fmt_to_string o))
@@ -105,7 +104,7 @@ let convert io init =
   | None -> err_convert io.i_fmt io.o_fmt convs
   | Some (_, f) ->
     let conv f args io input =                    (* executed by workers. *)
-      let err_status () = `Status (str "error on %s" input) in
+      let err_status () = `Status (strf "error on %s" input) in
       try
         let ic = if input <> "-" then open_in_bin input else stdin in
         let close_i ic = if input <> "-" then close_in ic else () in

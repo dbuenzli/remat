@@ -1,0 +1,179 @@
+@charset "UTF-8";
+/*
+ Copyright 2015 Daniel C. Bünzli. All rights reserved.
+ Distributed under the BSD3 license, see license at the end of the file.
+ %%NAME%% release %%VERSION%%
+*/
+
+@font-face
+{ font-family: 'OpenSans';
+  src: url('fonts/OpenSans-Regular-webfont.eot');
+  src: url('fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+  url('fonts/OpenSans-Regular-webfont.woff') format('woff'),
+  url('fonts/OpenSans-Regular-webfont.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400; }
+
+@font-face
+{ font-family: 'OpenSans';
+  src: url('fonts/OpenSans-Light-webfont.eot');
+  src: url('fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),
+  url('fonts/OpenSans-Light-webfont.woff') format('woff'),
+  url('fonts/OpenSans-Light-webfont.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 300; }
+
+
+
+@font-face
+{ font-family: 'fontawesome';
+  src: url('fonts/fontawesome-webfont.eot');
+  src: url('fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+  url('fonts/fontawesome-webfont.woff') format('woff'),
+  url('fonts/fontawesome-webfont.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400; }
+
+/* CSS reset for remat's descendents */
+
+#remat * { margin:0; padding:0; border: 0; /* outline: 0; */
+           font-size:100%; font-family:inherit; font-weight:inherit;
+           background: inherit; color:inherit; }
+
+#remat, #remat *, #remat *:before, #remat *:after
+{ -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+/* Remat's container */
+
+#remat
+{ width:100%; height:100%;
+  color:#DDD;
+  background:black;
+  font-size:1em;
+  line-height:1.375em;
+  font-weight:300;
+  font-family:'OpenSans', sans-serif; }
+
+/* Icons */
+
+#remat .icon
+{ font-family: fontawesome; font-size: inherit; font-weitht: 400;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+/* Buttons */
+
+#remat .button
+{ text-decoration: none; transition: 0.1s ease-in;
+  padding:0.3rem;
+  padding-left:0.5rem; padding-right:0.5rem;
+ }
+#remat .button:hover { background: #555; cursor:default;}
+#remat .button:active { background: #777; }
+#remat .button.link { cursor:pointer}
+
+/* Header */
+
+#remat header
+{ padding:0.5rem;
+  width:100%; height:100%;
+  display: flex; display: -webkit-flex; display: -moz-flex;
+  flex-flow: row wrap; -webkit-flex-flow: row wrap; -moz-flex-flow: row wrap;
+  align-items: center; -webkit-align-items:center;
+  justify-content: space-between; -webkit-justify-content: space-between; }
+
+#remat header > *
+{ flex-basis: 1 1 16.666%; -webkit-flex-basis: 1 1 16.666%; }
+
+/* Search field */
+
+#remat .search
+{ display: flex; display: -webkit-flex;
+  flex-basis: 50%; -webkit-flex-basis: 50%;
+  font-weight:400;
+  font-size:0.875rem; }
+
+#remat .search .label
+{ padding: 0.1rem 0.5rem; border: 1px solid #EEE; }
+
+#remat .search input
+{ flex: 1; -webkit-flex: 1; -ms-flex: 1; -moz-flex: 1;
+  border: 1px solid #EEE;
+  border-left:none;
+  border-right:none;
+  background: #EEE;
+  color:black;
+  padding: 0 0.5rem;
+  width:100%; }
+
+#remat .search button
+{ border: 1px solid #EEE;
+  padding: 0 0.5rem; }
+
+/* Tools */
+
+#remat .repo_tools
+{ display: flex; display: -webkit-flex; }
+
+#remat .locale_menu { text-transform: uppercase; }
+
+/* Indexes */
+
+#remat section.index
+{ padding:0.5rem;
+  width:100%; height:100%;
+  display: flex; display: -webkit-flex; display: -moz-flex;
+  flex-flow: row wrap; -webkit-flex-flow: row wrap; -moz-flex-flow: row wrap;
+  align-items: center; -webkit-align-items:center;
+  justify-content: space-between; -webkit-justify-content: space-between; }
+
+
+
+@media all and (max-width: 568px) {
+  #remat header > *
+  { flex-basis: 50%; -webkit-flex-basis: 50%; order:3; -webkit-order:3 }
+  #remat .search
+  { flex-basis: 100%; -webkit-flex-basis: 100%; }
+  #remat .home { order:1; -webkit-order:1 }
+  #remat .publisher_home { order:2; -webkit-order:2 }
+}
+
+
+
+
+
+/*
+   Copyright 2015 Daniel C. Bünzli.
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions
+   are met:
+
+   1. Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+   3. Neither the name of Daniel C. Bünzli nor the names of
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+   OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+   DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+   THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/

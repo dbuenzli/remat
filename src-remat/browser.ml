@@ -88,9 +88,10 @@ let pr_groups oc b =
 
 let pr_escape oc s = pr oc "%s" s
 let uri_group_name n =
-  let s = String.lowercase n in
-  for i = 0 to String.length n - 1 do if s.[i] = ' ' then s.[i] <- '-' done;
-  s
+  let b = Bytes.unsafe_of_string (String.lowercase n) in
+  let max = Bytes.length b - 1 in
+  for i = 0 to max do if b.[i] = ' ' then Bytes.set b i '-' done;
+  Bytes.unsafe_to_string b
 
 let output_html title pr_body oc b =
   let id = "id1" in

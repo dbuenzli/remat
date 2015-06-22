@@ -1,6 +1,16 @@
-true : package(unix), package(cmdliner), package(xmlm), package(jsonm)
-<**/*.{ml,mli}> : annot
-<src-common> : include
+<**/*.{ml,mli}> : bin_annot
+<examples> : -traverse
+
+#<src-common> : include
 <src-remat> : include
-<src-rematd> : include
-<src-www> : include
+#<src-rematd> : include
+#<src-www> : include
+
+<src-remat/*> : package(unix), package(cmdliner), package(xmlm), \
+               package(jsonm), package(jsont.jsonm), \
+               package(rresult), package(bos), package(bos.unix)
+<src-www/*> : package(unix), package(js_of_ocaml), syntax(camlp4o), \
+            package(js_of_ocaml.syntax), \
+            package(rresult), \
+            package(mtime.jsoo), \
+            package(jsont.jsoo), package(react), weak_js

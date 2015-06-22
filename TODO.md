@@ -1,6 +1,19 @@
-# DOING
-* Parse Index_d, Doc_d.
 
+
+
+# Localization
+
+* Sort out defaults business. Plot with jsont.
+
+# Format
+
+* Extend to allow index references in formats
+
+# Description
+* View labels, support foliotation
+
+
+## Old TODO
 # www
 
 * Keyboard shortcuts
@@ -10,8 +23,8 @@
 
 * Panning
 ** Mouse click or tap, hold and move on image.
-** Trackpad gesture. 
-** Keyboard <- -> ^ v 
+** Trackpad gesture.
+** Keyboard <- -> ^ v
 ** http://andywoodruff.com/blog/map-panning-and-zooming-methods
 
 * Zooming
@@ -20,7 +33,7 @@
 ** Keyboard 1,2,3,4,5 - 100%,200%,300,..
 ** Keyboard 0 - Fit to page
 ** Keyboard w - Fit to width
-** Keyboard z - toggle fit/100% 
+** Keyboard z - toggle fit/100%
 
 * Previous/Next page
 ** Keyboard n - next page
@@ -30,18 +43,18 @@
 ** page down/page up
 
 * Search on page
-* Help 
+* Help
 ** Help bubbles, see e.g. http://css-infos.net/property/-webkit-transition
 
 * Magnifier
-* Zoom 
+* Zoom
 * Minimal supported browser versions
 ** FF8
 ** IE9
 ** Safari 5.0
 
 * Design Goals
-** Respect browser back/forward 
+** Respect browser back/forward
 ** Sensible browser history
 ** Keyboard support for advanced users
 ** SHOW THE DATA, SHOW THE DATA, SHOW THE DATA
@@ -52,10 +65,10 @@
 # remat
 
 * TODO --no-ui option
-* remove ui ? 
-* TODO documentation add examples. 
+* remove ui ?
+* TODO documentation add examples.
 * TODO convert finereader -> finereader6
-* TODO convert bpin -> ptext 
+* TODO convert bpin -> ptext
 * TODO publish, check missing locales in data
 * Cross-page hyphenation,
   La voix du Peuple_1906_01_27_f_0001.tif
@@ -67,7 +80,7 @@
 
 * Vowels
 ** French vowels aeiouyâàëéêèïîôûù
-** Italian vowels aeiouàèìòù	
+** Italian vowels aeiouàèìòù
 
 * Mailing list
 ** http://www.freelists.org/
@@ -78,7 +91,7 @@
 http://support.google.com/webmasters/bin/answer.py?hl=en&answer=174992
 https://github.com/tmpvar/jsdom
 http://www.phantomjs.org/
-** Provide support for web search bots. (sitemap.xml to the text)  
+** Provide support for web search bots. (sitemap.xml to the text)
 
 # rematd
 
@@ -93,7 +106,7 @@ http://www.phantomjs.org/
 ** Browser image scaling
 ** http://stackoverflow.com/questions/2303690/resizing-an-image-in-an-html5-canvas
 
-* Spell-checking according to the data in the corpus. 
+* Spell-checking according to the data in the corpus.
 ** Combination of N-grams + edit distance.
 ** http://norvig.com/spell-correct.html
 ** http://www.dcs.bbk.ac.uk/~roger/spellchecking.html
@@ -104,8 +117,8 @@ http://digit.nkp.cz/knihcin/digit/vav/bi-level/compression_bi-level_images.html
 * Nginx rate limiting to avoid scrape
 *** http://sysarcana.com/2010/05/26/rate-limiting-with-nginx/
 *** http://wiki.nginx.org/NginxHttpLimitReqModule
-    
-* Finding rectangles 
+
+* Finding rectangles
 ** http://twanvl.nl/blog/haskell/finding-rectangles
 ** http://twanvl.nl/blog/haskell/finding-rectangles-part2
 

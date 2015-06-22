@@ -1,0 +1,18 @@
+{
+  "name":
+  { "en": { "text": "By language", "href": "lang" },
+    "fr": { "text": "Par langue", "href": "lang" },
+    "de": { "text": "Nach Sprache", "href": "sprache" }},
+
+  "doc_vars":
+  { "lang": ["doc_langs"],
+    "title": ["title"],
+    "title_prefix": ["title_prefix"],
+    "date": ["date"] },
+
+  "key": { "*": "$(lang)-$(title)-$(title_prefix)-$(date)" },
+  "headings": { "*": [{ "label": "$(lang)", "toc": "all" }]},
+  "doc_ref":
+  { "*": { "descr": "$(title_prefix)$(title), $(date)",
+           "doc_type": true, "doc_count": true }}
+}

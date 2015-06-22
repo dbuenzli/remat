@@ -6,18 +6,23 @@
 
 (** Abbyy FineReader XML OCR data.
 
-  [FineReader] parses the {{:http://www.abbyy.com}ABBYY} FineReader XML
-   OCR data structure. The data structure closely models the XML structure
-   but it's rather inefficient.
+    [FineReader] parses the {{:http://www.abbyy.com}ABBYY} FineReader
+    XML OCR data structure. The data structure closely models the XML
+    structure but it's rather inefficient.
 
   {b References.}
-  {{:http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml}
-    The FineReader 6v1 schema}. *)
+  {ul
+    {- {{:http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml}
+    The FineReader 6v1 schema}}} *)
 
 (** {1 FineReader types} *)
 
 type rect = { l : int; t : int; r : int; b : int }
 (** The type for FineReader rectangles. *)
+
+val pp_rect : Format.formatter -> rect -> unit
+(** [pp_rect ppf r] prints an unspecified representation of [r] on
+    [ppf]. *)
 
 type char_params =
     { char_rect : rect;
@@ -34,6 +39,11 @@ type char_params =
       mean_stroke_width : int option;
       char : string }
 (** The type for FineReader character parameters. *)
+
+val pp_char_params : Format.formatter -> char_params -> unit
+(** [pp_char_params ppf cp] prints an unspecified representation of [cp] on
+    [ppf]. *)
+
 
 type formatting =
     { lang : string;
@@ -52,11 +62,19 @@ type formatting =
       chars : char_params list }
 (** The type for FineReader formatting. *)
 
+val pp_formatting : Format.formatter -> formatting -> unit
+(** [pp_formatting ppf f] prints an unspecified representation of [f] on
+    [ppf]. *)
+
 type line =
     { baseline : int;
       line_rect : rect;
       formattings : formatting list }
 (** The type for FineReader lines *)
+
+val pp_line : Format.formatter -> line -> unit
+(** [pp_line ppf l] prints an unspecified representation of [l] on
+    [ppf]. *)
 
 type par =
     { drop_cap_chars_count : int;
@@ -69,6 +87,10 @@ type par =
       lines : line list }
 (** The type for FineReader paragraphs. *)
 
+val pp_par : Format.formatter -> par -> unit
+(** [pp_par ppf p] prints an unspecified representation of [p] on
+    [ppf]. *)
+
 type text =
     { orientation : [`Normal | `Rotated_cw | `Rotated_upsidedown |
                      `Rotated_ccw ];
@@ -77,6 +99,11 @@ type text =
       inverted : bool;
       paragraphs : par list; }
 (** The type for FineReader text. *)
+
+val pp_text : Format.formatter -> text -> unit
+(** [pp_text ppf t] prints an unspecified representation of [t] on
+    [ppf]. *)
+
 
 type cell_border_type = [`Absent |`Unknown | `White | `Black]
 (** The type for FineReader table cell border types. *)
@@ -95,14 +122,26 @@ type cell =
       cell_height : int; }
 (** The type for FineReader table cells. *)
 
+(*
+val pp_cell : Format.formatter -> cell -> unit
+*)
+
 type row = cell list
 (** The type for FineReader table rows. *)
+
+(*
+val pp_row : Format.formatter -> row -> unit
+*)
 
 type block =
     { block_type : [`Text of text | `Table of row list | `Picture | `Barcode];
       block_rect : rect;
       block_region : rect list; }
 (** The type for a FineReader block. *)
+
+val pp_block : Format.formatter -> block -> unit
+(** [pp_block ppf b] prints an unspecified representation of [b] on
+    [ppf]. *)
 
 type page =
     { width : int;
@@ -112,6 +151,10 @@ type page =
       blocks : block list }
 (** The type for a FineReader page. *)
 
+val pp_page : Format.formatter -> page -> unit
+(** [pp_page ppf p] prints an unspecified representation of [p] on
+    [ppf]. *)
+
 type document =
     { version : string;
       producer : string;
@@ -120,6 +163,10 @@ type document =
       languages : string option;
       pages : page list }
 (** The type for a FineReader document. *)
+
+val pp_document : Format.formatter -> document -> unit
+(** [pp_document ppf d] prints an unspecified representation of [d] on
+    [ppf]. *)
 
 (** {1 Input} *)
 
@@ -134,23 +181,6 @@ val input : ?err:(Xmlm.pos -> string -> unit) -> Xmlm.source -> document
 val ascii_art : Format.formatter -> document -> unit
 (** [ascii_art ppf d] prints selected part of [d] as ASCII art on [ppf]. *)
 
-(** {1 Pretty printers}
-
-    For debugging purpose. *)
-
-val pp_rect : Format.formatter -> rect -> unit
-val pp_char_params : Format.formatter -> char_params -> unit
-val pp_formatting : Format.formatter -> formatting -> unit
-val pp_line : Format.formatter -> line -> unit
-val pp_par : Format.formatter -> par -> unit
-val pp_text : Format.formatter -> text -> unit
-(*
-val pp_cell : Format.formatter -> cell -> unit
-val pp_row : Format.formatter -> row -> unit
-*)
-val pp_block : Format.formatter -> block -> unit
-val pp_page : Format.formatter -> page -> unit
-val pp_document : Format.formatter -> document -> unit
 
 (*---------------------------------------------------------------------------
    Copyright 2012 Daniel C. Bünzli

@@ -1,7 +1,12 @@
 EXT js
-PKG cmdliner jsonm xmlm
-B _build/**
+PKG cmdliner jsont jsont.jsoo jsont.jsonm jsonm xmlm react js_of_ocaml
+PKG rresult bos bos.unix
 S src-common
+S src-data
 S src-remat
 S src-rematd
 S src-www
+B _build/src-common
+B _build/src-remat
+B _build/src-rematd
+B _build/src-www

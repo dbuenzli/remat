@@ -1,0 +1,22 @@
+{
+  "name":
+  { "en": { "text": "By volume", "href": "vol" },
+    "fr": { "text": "Par volume", "href": "vol" },
+    "de": { "text": "Nach Band", "href": "vol" }},
+
+  "doc_vars": { "volume": ["volume"], "issue": ["issue"] },
+  "key": { "*": "$(volume)-$(issue)" }
+
+  "headings":
+  { "en": [{ "label": "Volume $(volume)" }],
+    "fr": [{ "label": "Volume $(volume)" }],
+    "de": [{ "label": "Band $(volume)" }] }
+
+  "doc_ref":
+  { "en": { "descr": "Issue $(issue)" }
+                       "issue": { "path": ["issue"] }}},
+    "fr": { "descr": "Édition $(issue)" }
+                       "issue": { "path": ["issue"] }}},
+    "de": { "descr": { "format": "Ausgabe $(issue)",
+                       "issue": { "path": ["issue"] }}}}
+}

@@ -4,7 +4,7 @@
    %%NAME%% release %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-open Prelude
+open Bos
 
 (* Initialization is common to all commands *)
 
@@ -32,14 +32,14 @@ let log_level_conv = Cmdliner.Arg.enum log_level_enum
 
 (* Environment variables *)
 
-let env_bool e = match Sysm.env e with
+let env_bool e = match OS.Env.var e with (* TODO use OS.Env.value *)
 | None -> None
 | Some v ->
     match String.lowercase v with
     | "" | "false" | "0" -> Some false
     | _ -> Some true
 
-let env_enum e enum_def = match Sysm.env e with
+let env_enum e enum_def = match OS.Env.var e with
 | None -> None
 | Some v ->
     let v = String.lowercase v in
@@ -50,7 +50,7 @@ let var_utf8_msgs = "REMAT_UTF8_MSGS"
 let var_verbose = "REMAT_VERBOSE"
 
 let man_vars =
-  let doc var doc = `I (str "$(i,%s)" var, doc) in
+  let doc var doc = `I (strf "$(i,%s)" var, doc) in
   [ doc var_color "See option $(b,--color).";
     doc var_utf8_msgs "Use UTF-8 characters in $(mname) messages.";
     doc var_verbose "See option $(b,--verbose)."; ]
@@ -75,14 +75,14 @@ open Cmdliner
 let docs = "COMMON OPTIONS"
 
 let color_opt  =
-  let doc = str "Colorize the output. $(docv) must be %s." color_doc in
+  let doc = strf "Colorize the output. $(docv) must be %s." color_doc in
   Arg.(value & opt color_conv `Auto & info ["color"] ~doc ~docv:"WHEN" ~docs)
 
 let verbose_opts =
   let verbose =
     Arg.(value & opt ~vopt:(Some Log.Info) log_level_conv (Some Log.Warning) &
          info ["v"; "verbose"] ~docs ~docv:"LEVEL"
-           ~doc:(str "Be more or less verbose. $(docv) must be %s."
+           ~doc:(strf "Be more or less verbose. $(docv) must be %s."
                    log_level_doc))
   in
   let quiet =
@@ -111,7 +111,7 @@ let help_sections =
 
 let see_also_section cmds =
   let base = if cmds = [] then "$(b,rematd)(1)" else "$(b,$(mname))(1)" in
-  let see_also = List.map (str "$(b,$(mname)-%s)(1)") cmds in
+  let see_also = List.map (strf "$(b,$(mname)-%s)(1)") cmds in
   let see_also = String.concat ", " (base :: see_also) in
   [ `S "SEE ALSO"; `P see_also ]
 
